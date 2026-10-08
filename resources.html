@@ -4,68 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resources | My Stuff</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: #0f0f0f;
-            color: #e5e5e5;
-            font-family: Georgia, serif;
-            max-width: 900px;
-            margin: auto;
-            padding: 50px;
+        :root { --ink: #1c2433; --muted: #5f6878; --pen: #2a4d8f; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #ece7df; color: var(--ink); font-family: Georgia, serif; line-height: 1.6; }
+        .wrap { max-width: 860px; margin: 40px auto; padding: 0 20px 48px; }
+        a { color: var(--pen); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        a:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; }
+        h1 { font-size: 3.5rem; line-height: 1.15; margin: 24px 0 8px; }
+        .note { font-family: Caveat, "Segoe Script", "Bradley Hand", cursive; color: var(--pen); font-size: 1.5rem; margin-bottom: 32px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 2.6rem; } }
+        .board {
+            background-color: #c9a574;
+            background-image: radial-gradient(rgba(90, 60, 30, 0.22) 1px, transparent 1.5px), radial-gradient(rgba(255, 235, 200, 0.25) 1px, transparent 1.5px);
+            background-size: 7px 7px, 11px 11px;
+            background-position: 0 0, 3px 4px;
+            border: 12px solid #8a6a46;
+            border-radius: 4px;
+            padding: 40px 32px 36px;
+            box-shadow: 0 4px 14px rgba(40, 30, 15, 0.3);
         }
-
-        a {
-            color: #c9a86a;
-            text-decoration: none;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
         .resource {
-            background: #171717;
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+            position: relative;
+            background: #fffef9;
+            padding: 30px 22px 22px;
+            transform: rotate(var(--r));
+            box-shadow: 0 3px 6px rgba(40, 30, 15, 0.35);
         }
-
-        .resource:hover {
-            border-color: #c9a86a;
+        .resource::before {
+            content: "";
+            position: absolute; top: 9px; left: 50%; margin-left: -7px;
+            width: 14px; height: 14px; border-radius: 50%;
+            background: #c0392b;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4), inset 2px 2px 3px rgba(255, 255, 255, 0.4);
         }
-
-        .placeholder {
-            color: #999;
-        }
+        .resource h2 { font-size: 1.3rem; margin-bottom: 6px; }
+        .placeholder { color: var(--muted); }
     </style>
 </head>
 <body>
-
-    <a href="index.html">← Home</a>
-
+<div class="wrap">
+    <a href="index.html">&larr; Home</a>
     <h1>Resources</h1>
+    <p class="note">Notes, websites, playlists</p>
 
-    <div class="resource">
-        <h2>[Link]</h2>
-        <p class="placeholder">Working on it!</p>
+    <div class="board">
+        <div class="grid">
+        <div class="resource" style="--r:-1.2deg">
+            <h2>[Link]</h2>
+            <p class="placeholder">Working on it!</p>
+        </div>
+        <div class="resource" style="--r:1deg">
+            <h2>[Link]</h2>
+            <p class="placeholder">Working on it!</p>
+        </div>
+        <div class="resource" style="--r:0.8deg">
+            <h2>[Link]</h2>
+            <p class="placeholder">Working on it!</p>
+        </div>
+        <div class="resource" style="--r:-1.5deg">
+            <h2>[Link]</h2>
+            <p class="placeholder">Working on it!</p>
+        </div>
+        </div>
     </div>
-
-    <div class="resource">
-        <h2>[Link]</h2>
-        <p class="placeholder">Working on it!</p>
-    </div>
-
-    <div class="resource">
-        <h2>[Link]</h2>
-        <p class="placeholder">Working on it!</p>
-    </div>
-
-    <div class="resource">
-        <h2>[Link]</h2>
-        <p class="placeholder">Working on it!</p>
-    </div>
-
+</div>
 </body>
 </html>
