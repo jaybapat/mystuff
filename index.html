@@ -89,10 +89,25 @@
     </ul>
 
     <blockquote class="clipping">
-        &ldquo;There is no such thing as talent. There is pressure.&rdquo;
+        <span id="quote"></span>
         <cite>Alfred Adler</cite>
     </blockquote>
     <p class="note">&uarr; keep this one</p>
+
+<script>
+const quotes = [
+    "There is no such thing as talent. There is pressure.",
+    "Trust only movement. Life happens at the level of events, not of words.",
+    "It is easier to fight for one's principles than to live up to them.",
+    "The chief danger in life is that you may take too many precautions.",
+    "The only normal people are the ones you don't know very well.",
+    "Follow your heart but take your brain with you.",
+    "Nothing can destroy self-esteem except the individual himself."
+];
+
+document.getElementById("quote").textContent =
+    "“" + quotes[Math.floor(Math.random() * quotes.length)] + "”";
+</script>
 
     <h2>Currently working on</h2>
     <ul class="plain todo">
