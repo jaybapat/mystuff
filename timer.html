@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blossom — Pomodoro Study Timer</title>
+
+<!--
+  Two Google Fonts:
+  - Fraunces: a serif with a slightly organic, hand-drawn feel — used for the
+    big timer number and the headline, since this app is about growth and
+    nature, not a sterile productivity tool.
+  - Inter: a clean sans-serif for buttons and small UI text, so the interface
+    itself stays quiet and out of the way.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+ /* ---------- Refined Theme ---------- */
+
+:root {
+  --soil: #f4f1ea;
+  --pine: #1f1f1f;
+  --pine-dim: #666666;
+  --bark: #6b5747;
+  --moss: #526b48;
+  --ember: #8c7355;
+  --danger: #8b3a3a;
+  --card: #ffffff;
+  --border: #d8d2c7;
+}
+
+[data-theme="spring"] {
+  --soil: #faf5f4;
+  --pine: #2a2a2a;
+  --pine-dim: #757575;
+  --bark: #8b6a58;
+  --moss: #5e9b58;
+  --ember: #d47a8d;
+  --danger: #a64f4f;
+  --card: #ffffff;
+  --border: #e8ddd9;
+}
+
+[data-theme="autumn"] {
+  --soil: #2d2119;
+  --pine: #f5e9d8;
+  --pine-dim: #c4a48a;
+  --bark: #c78a54;
+  --moss: #b56b32;
+  --ember: #d45d3f;
+  --danger: #ff7d64;
+  --card: #3a2a1f;
+  --border: #5d4030;
+}
+
+[data-theme="winter"] {
+  --soil: #14202a;
+  --pine: #edf3f6;
+  --pine-dim: #9ab0ba;
+  --bark: #70828a;
+  --moss: #6a9da3;
+  --ember: #9ddbe3;
+  --danger: #d98373;
+  --card: #22313d;
+  --border: #3b4d59;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--soil);
+  color: var(--pine);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 500px;
+  padding: 48px 36px;
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 32px;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--pine-dim);
+  font-size: 14px;
+  font-style: italic;
+  margin: 0 0 24px;
+}
+
+.season-picker,
+.length-picker,
+.controls,
+.lb-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.season-picker,
+.length-picker {
+  margin-bottom: 28px;
+}
+
+.season-btn,
+.length-btn,
+.lb-tab {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--pine-dim);
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.season-btn.active,
+.length-btn.active {
+  border-color: var(--pine);
+  color: var(--pine);
+  font-weight: 600;
+}
+
+.auth-box {
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--soil);
+  color: var(--pine);
+  font-size: 14px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-buttons button {
+  flex: 1;
+}
+
+.auth-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.ring-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 32px;
+}
+
+.ring-wrap svg {
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  stroke: var(--border);
+}
+
+.ring-progress {
+  stroke: var(--moss);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke 0.4s ease;
+}
+
+.ring-progress.active {
+  filter: drop-shadow(0 0 4px var(--ember));
+}
+
+.ring-progress.dying {
+  stroke: var(--danger);
+}
+
+.time-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 48px;
+}
+
+.tree-wrap {
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.tree-wrap.dead svg {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.status-line {
+  color: var(--pine-dim);
+  font-size: 13px;
+  margin-bottom: 24px;
+  min-height: 18px;
+}
+
+.status-line.dying {
+  color: var(--danger);
+}
+
+button {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 12px 22px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--pine);
+  color: var(--soil);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--pine-dim);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  color: var(--pine);
+  border-color: var(--pine);
+}
+
+.leaderboard {
+  margin-top: 12px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+
+.leaderboard h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.lb-tab.active {
+  background: var(--pine);
+  color: var(--soil);
+  border-color: var(--pine);
+}
+
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.lb-row.you {
+  background: color-mix(in srgb, var(--moss) 12%, var(--card));
+}
+
+.lb-rank {
+  width: 24px;
+  text-align: right;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+}
+
+.lb-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.lb-value {
+  color: var(--pine-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Quote section */
+
+.clipping {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--pine-dim);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.clipping cite {
+  display: block;
+  margin-top: 12px;
+  font-style: normal;
+  color: var(--pine);
+}
+
+/* Ambient effects toned down */
+
+.particle {
+  opacity: 0.2;
+}
+
+[data-theme="spring"] .particle {
+  opacity: 0.3;
+}
+
+[data-theme="autumn"] .particle {
+  opacity: 0.3;
+}
+
+[data-theme="winter"] .particle {
+  opacity: 0.5;
+}
+</style>
+</head>
+<body>
+
+<div class="ambience" id="ambience"></div>
+
+<div class="app">
+  <h1>Blossom</h1>
+  <p class="subtitle">Let this tree blossom and let your mind grow.</p>
+
+  <!-- ---------- Auth (username-based, backed by Firebase) ---------- -->
+  <div class="auth-box" id="authLoggedOut">
+    <input class="auth-input" id="usernameInput" placeholder="username" autocomplete="username" />
+    <input class="auth-input" id="passwordInput" type="password" placeholder="password" autocomplete="current-password" />
+    <div class="auth-buttons">
+      <button class="btn-secondary" id="signupBtn" type="button">Sign up</button>
+      <button class="btn-primary" id="loginBtn" type="button">Log in</button>
+    </div>
+    <p class="auth-error" id="authError"></p>
+  </div>
+
+  <div class="auth-box" id="authLoggedIn" style="display:none;">
+    <p class="auth-status">Signed in as <strong id="currentUsername"></strong></p>
+    <button class="btn-secondary" id="logoutBtn" type="button">Log out</button>
+  </div>
+
+  <!-- Theme picker: swaps the CSS custom properties in :root by setting
+       data-theme on <body>. Doesn't touch layout or any other logic. -->
+  <div class="season-picker" id="seasonPicker">
+    <button class="season-btn active" data-theme="summer">Summer</button>
+    <button class="season-btn" data-theme="spring">Spring</button>
+    <button class="season-btn" data-theme="autumn">Autumn</button>
+    <button class="season-btn" data-theme="winter">Winter</button>
+  </div>
+
+  <!-- Session length picker: this decides which "species" the tree will be -->
+  <div class="length-picker" id="lengthPicker">
+    <button class="length-btn" data-minutes="25">25 min · Sprout</button>
+    <button class="length-btn" data-minutes="45">45 min · Oak</button>
+    <button class="length-btn" data-minutes="60">60 min · Redwood</button>
+  </div>
+
+  <!-- Circular countdown ring -->
+  <div class="ring-wrap">
+    <svg width="220" height="220" viewBox="0 0 220 220">
+      <circle class="ring-track" cx="110" cy="110" r="100" fill="none" stroke-width="10" />
+      <circle id="ringProgress" class="ring-progress" cx="110" cy="110" r="100"
+              fill="none" stroke-width="10"
+              stroke-dasharray="628" stroke-dashoffset="0" />
+    </svg>
+    <div class="time-label" id="timeLabel">25:00</div>
+  </div>
+
+  <!-- The tree itself, drawn as SVG and swapped/scaled by growth stage -->
+  <div class="tree-wrap" id="treeWrap">
+    <svg id="treeSvg" width="100" height="130" viewBox="0 0 100 130"></svg>
+  </div>
+
+  <p class="status-line" id="statusLine">Pick a length, then press start.</p>
+
+  <div class="controls">
+    <button class="btn-primary" id="startBtn">Start</button>
+    <button class="btn-secondary" id="resetBtn">Reset</button>
+  </div>
+
+  <!-- ---------- Leaderboard ---------- -->
+  <div class="leaderboard">
+    <h2>Leaderboard</h2>
+
+    <!-- Three separate rankings, not one blended score — hours, streaks,
+         and trees measure different things, so we let you switch between
+         them rather than guessing how to weigh them against each other. -->
+    <div class="lb-tabs" id="lbTabs">
+      <button class="lb-tab active" data-metric="hours">Hours</button>
+      <button class="lb-tab" data-metric="streak">Streak</button>
+      <button class="lb-tab" data-metric="trees">Trees</button>
+    </div>
+
+    <ol class="lb-list" id="lbList"></ol>
+  </div>
+
+</div>
+
+<script type="module">
+  /*
+    ============================================================
+    Firebase setup
+    ============================================================
+    Loaded straight from Google's CDN as ES modules — no npm install,
+    no build step, works directly from a plain HTML file on GitHub Pages.
+  */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, updateDoc, increment,
+    collection, query, orderBy, limit, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvKnSa7A6LrN8czx_jajwEwQd-oMIrL0U",
+    authDomain: "blossom-study-timer.firebaseapp.com",
+    projectId: "blossom-study-timer",
+    storageBucket: "blossom-study-timer.firebasestorage.app",
+    messagingSenderId: "245281404122",
+    appId: "1:245281404122:web:8d5a3b319de11a768e21e3",
+  };
+
+  const firebaseApp = initializeApp(firebaseConfig);
+  const auth = getAuth(firebaseApp);
+  const db = getFirestore(firebaseApp);
+
+  // Firebase Auth doesn't have real "usernames" — only email/password. So we
+  // fake it: a username becomes "username@blossom.local" behind the scenes,
+  // and the user never sees or types an email at all.
+  const FAKE_EMAIL_DOMAIN = "blossom.local";
+  const usernameToEmail = (username) => `${username.trim().toLowerCase()}@${FAKE_EMAIL_DOMAIN}`;
+
+  /*
+    ============================================================
+    GROVE — plain JavaScript, no frameworks or build step.
+    Everything below is explained inline since this is meant to
+    be readable while you're still learning.
+    ============================================================
+  */
+
+  // ---------- State ----------
+  // "State" just means: the current values that describe what's happening
+  // right now. We keep them in plain variables and re-draw the screen
+  // whenever they change.
+  let sessionMinutes = 25;      // chosen session length
+  let secondsLeft = sessionMinutes * 60;
+  let timerId = null;           // holds the setInterval reference so we can stop it
+  let isRunning = false;
+  let isDead = false;           // true once the tree has died this session
+
+  // Tracks how long the tab has been hidden, so we can kill the tree
+  // if it's been more than 30 seconds.
+  let hiddenSince = null;
+  const KILL_AFTER_MS = 30 * 1000; // 30 seconds, in milliseconds
+
+  // ---------- Elements ----------
+  // Grabbing references to the HTML elements we'll update from JS.
+  const timeLabel   = document.getElementById('timeLabel');
+  const ringProgress = document.getElementById('ringProgress');
+  const startBtn    = document.getElementById('startBtn');
+  const resetBtn    = document.getElementById('resetBtn');
+  const statusLine  = document.getElementById('statusLine');
+  const treeWrap    = document.getElementById('treeWrap');
+  const treeSvg     = document.getElementById('treeSvg');
+  const lengthPicker = document.getElementById('lengthPicker');
+
+  const RING_CIRCUMFERENCE = 2 * Math.PI * 100; // matches the circle's r="100"
+
+  // ---------- Tree species (by session length) ----------
+  // Each species is just a function that draws a slightly different tree
+  // shape for a given "growth" amount (0 = seed, 1 = fully grown).
+  // Keeping this as simple hand-drawn SVG paths, no images needed.
+
+  function drawSprout(g) {
+    // g = growth, 0 to 1
+    const h = 20 + g * 70; // trunk height grows
+    treeSvg.innerHTML = `
+      <rect x="47" y="${130 - h}" width="6" height="${h}" fill="var(--bark)" rx="2"/>
+      <circle cx="50" cy="${130 - h - 10}" r="${10 + g * 18}" fill="var(--moss)" />
+    `;
+  }
+
+  function drawOak(g) {
+    const h = 25 + g * 65;
+    const canopyR = 14 + g * 26;
+    treeSvg.innerHTML = `
+      <rect x="45" y="${130 - h}" width="10" height="${h}" fill="var(--bark)" rx="2"/>
+      <circle cx="50" cy="${130 - h - canopyR * 0.6}" r="${canopyR}" fill="var(--moss)" opacity="0.85" />
+      <circle cx="${50 - canopyR*0.5}" cy="${130 - h - canopyR*0.3}" r="${canopyR*0.7}" fill="var(--moss)" />
+      <circle cx="${50 + canopyR*0.5}" cy="${130 - h - canopyR*0.3}" r="${canopyR*0.7}" fill="var(--moss)" />
+    `;
+  }
+
+  function drawRedwood(g) {
+    const h = 30 + g * 85;
+    treeSvg.innerHTML = `
+      <rect x="46" y="${130 - h}" width="8" height="${h}" fill="var(--bark)" rx="2"/>
+      <polygon points="50,${130-h-10} ${50-14-g*10},${130-h+40} ${50+14+g*10},${130-h+40}" fill="var(--moss)" opacity="0.9"/>
+      <polygon points="50,${130-h+20} ${50-11-g*8},${130-h+65} ${50+11+g*8},${130-h+65}" fill="var(--moss)"/>
+    `;
+  }
+
+  const species = {
+    25: drawSprout,
+    45: drawOak,
+    60: drawRedwood,
+  };
+
+  function drawDeadTree() {
+    // A bare, leafless trunk — used when the tree dies.
+    treeSvg.innerHTML = `
+      <rect x="47" y="60" width="6" height="70" fill="var(--bark)" rx="2"/>
+      <line x1="50" y1="60" x2="30" y2="45" stroke="var(--bark)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="50" y1="65" x2="70" y2="48" stroke="var(--bark)" stroke-width="4" stroke-linecap="round"/>
+    `;
+  }
+
+  // ---------- Rendering ----------
+  // Redraws everything on screen based on current state. Called after
+  // every change so the UI never gets out of sync with the variables above.
+  function render() {
+    const totalSeconds = sessionMinutes * 60;
+    const elapsed = totalSeconds - secondsLeft;
+    const growth = Math.min(elapsed / totalSeconds, 1);
+
+    // Time label, formatted as MM:SS
+    const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+    const secs = (secondsLeft % 60).toString().padStart(2, '0');
+    timeLabel.textContent = `${mins}:${secs}`;
+
+    // Countdown ring: dashoffset shrinks as time passes
+    const offset = RING_CIRCUMFERENCE * (1 - growth);
+    ringProgress.style.strokeDashoffset = offset;
+    ringProgress.classList.toggle('dying', isDead);
+    ringProgress.classList.toggle('active', isRunning && !isDead);
+
+    // Tree
+    treeWrap.classList.toggle('dead', isDead);
+    if (isDead) {
+      drawDeadTree();
+    } else {
+      const draw = species[sessionMinutes] || drawSprout;
+      draw(growth);
+    }
+
+    // Buttons — Start is one-way: once a session begins, it's disabled
+    // until Reset is pressed. There's no pause.
+    startBtn.textContent = 'Start';
+    startBtn.disabled = isRunning || isDead;
+    lengthPicker.querySelectorAll('.length-btn').forEach(btn => {
+      btn.classList.toggle('active', Number(btn.dataset.minutes) === sessionMinutes);
+      btn.disabled = isRunning;
+    });
+  }
+
+  // ---------- Timer logic ----------
+  function tick() {
+    secondsLeft -= 1;
+    if (secondsLeft <= 0) {
+      secondsLeft = 0;
+      finishSession();
+      return;
+    }
+    saveState();
+    render();
+  }
+
+  function startTimer() {
+    if (isDead) return; // can't resume a dead session — must reset
+    isRunning = true;
+    statusLine.textContent = 'Stay on this tab. Leaving for 30 seconds kills the tree.';
+    statusLine.classList.remove('dying');
+    timerId = setInterval(tick, 1000);
+    saveState();
+    render();
+  }
+
+  function finishSession() {
+    isRunning = false;
+    clearInterval(timerId);
+    statusLine.textContent = 'Session complete — your tree made it!';
+    clearSavedState();
+    recordCompletedSession(sessionMinutes);
+    render();
+  }
+
+  function killTree() {
+    if (isDead) return;
+    isDead = true;
+    isRunning = false;
+    clearInterval(timerId);
+    statusLine.textContent = 'You left too long — the tree died. Reset to try again.';
+    statusLine.classList.add('dying');
+    saveState();
+    render();
+  }
+
+  function resetSession() {
+    clearInterval(timerId);
+    isRunning = false;
+    isDead = false;
+    secondsLeft = sessionMinutes * 60;
+    hiddenSince = null;
+    statusLine.textContent = 'Pick a length, then press start.';
+    statusLine.classList.remove('dying');
+    clearSavedState();
+    render();
+  }
+
+  // ---------- Visibility tracking (the "leave for 30 seconds" rule) ----------
+  // The Page Visibility API tells us when the browser tab is hidden
+  // (user switched tabs, minimized the window, or locked their phone).
+  // We can't see OTHER tabs — only whether THIS tab is currently visible.
+  document.addEventListener('visibilitychange', () => {
+    if (!isRunning) return; // only matters during an active session
+
+    if (document.hidden) {
+      hiddenSince = Date.now();
+    } else if (hiddenSince) {
+      const awayMs = Date.now() - hiddenSince;
+      hiddenSince = null;
+      if (awayMs > KILL_AFTER_MS) {
+        killTree();
+      }
+    }
+  });
+
+  // ---------- Persistence (survives the browser discarding this tab) ----------
+  // Chrome (and other browsers) can throw away a background tab's memory to
+  // save RAM, then fully reload the page when you switch back. That wipes
+  // every variable above back to its starting value. We can't stop the
+  // browser from doing this, but we can make the page recover gracefully:
+  // save the important state to localStorage on every tick, and on page
+  // load, check if there's a session to pick back up.
+  const STORAGE_KEY = 'grove-session';
+
+  function saveState() {
+    const state = {
+      sessionMinutes,
+      secondsLeft,
+      isDead,
+      isRunning,
+      savedAt: Date.now(), // wall-clock time, so we can measure real elapsed time later
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function clearSavedState() {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return; // nothing saved — fresh page, nothing to restore
+
+    let saved;
+    try {
+      saved = JSON.parse(raw);
+    } catch (e) {
+      return; // corrupted data, ignore it
+    }
+
+    sessionMinutes = saved.sessionMinutes;
+
+    if (saved.isDead || !saved.isRunning) {
+      // Session wasn't actively counting down when we left — just restore
+      // it exactly as it was (dead, paused-at-start, or finished).
+      secondsLeft = saved.secondsLeft;
+      isDead = saved.isDead;
+      if (isDead) {
+        statusLine.textContent = 'You left too long — the tree died. Reset to try again.';
+        statusLine.classList.add('dying');
+      }
+      return;
+    }
+
+    // It WAS running when the page went away. Figure out how much real
+    // time has passed since our last save, using actual clock time rather
+    // than counting ticks (since ticks stop completely while discarded).
+    const elapsedMs = Date.now() - saved.savedAt;
+    const elapsedSeconds = Math.round(elapsedMs / 1000);
+
+    if (elapsedMs > KILL_AFTER_MS) {
+      // Gone longer than the allowed buffer — same rule as switching tabs.
+      isDead = true;
+      secondsLeft = saved.secondsLeft;
+      statusLine.textContent = 'You left too long — the tree died. Reset to try again.';
+      statusLine.classList.add('dying');
+      return;
+    }
+
+    // Within the buffer — pick up right where the countdown would actually
+    // be now, and keep running.
+    secondsLeft = Math.max(saved.secondsLeft - elapsedSeconds, 0);
+    if (secondsLeft <= 0) {
+      finishSession();
+    } else {
+      isRunning = true;
+      timerId = setInterval(tick, 1000);
+      statusLine.textContent = 'Stay on this tab. Leaving for 30 seconds kills the tree.';
+    }
+  }
+
+  // ---------- Ambient particles ----------
+  // Creates a handful of drifting shapes with randomized horizontal
+  // position, speed, and delay so they don't all move in lockstep.
+  // The shape/color itself is controlled entirely by CSS (see [data-theme]
+  // rules above) — this JS just decides HOW MANY and WHERE they start.
+  const ambience = document.getElementById('ambience');
+  const PARTICLE_COUNT = 14;
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.setProperty('--x', `${Math.random() * 100}%`);
+    p.style.setProperty('--dur', `${10 + Math.random() * 10}s`); // 10–20s to fall
+    p.style.setProperty('--delay', `${Math.random() * -20}s`);  // negative delay staggers start times
+    ambience.appendChild(p);
+  }
+
+  // ---------- Theme (season) switching ----------
+  const seasonPicker = document.getElementById('seasonPicker');
+  const THEME_KEY = 'grove-theme';
+
+  function applyTheme(theme) {
+    if (theme === 'summer') {
+      document.body.removeAttribute('data-theme'); // summer = the default, no override needed
+    } else {
+      document.body.setAttribute('data-theme', theme);
+    }
+    seasonPicker.querySelectorAll('.season-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  seasonPicker.addEventListener('click', (e) => {
+    const btn = e.target.closest('.season-btn');
+    if (!btn) return;
+    applyTheme(btn.dataset.theme);
+  });
+
+  // Restore whichever season was picked last time, defaulting to summer.
+  applyTheme(localStorage.getItem(THEME_KEY) || 'summer');
+
+  // ---------- Auth ----------
+  const authLoggedOut  = document.getElementById('authLoggedOut');
+  const authLoggedIn   = document.getElementById('authLoggedIn');
+  const usernameInput  = document.getElementById('usernameInput');
+  const passwordInput  = document.getElementById('passwordInput');
+  const signupBtn      = document.getElementById('signupBtn');
+  const loginBtn       = document.getElementById('loginBtn');
+  const logoutBtn      = document.getElementById('logoutBtn');
+  const authError      = document.getElementById('authError');
+  const currentUsernameEl = document.getElementById('currentUsername');
+
+  // Creates the Firestore doc that tracks a user's stats, only if it
+  // doesn't already exist (so logging in later doesn't wipe progress).
+  async function ensureUserDoc(uid, username) {
+    const ref = doc(db, 'users', uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        username,
+        totalHours: 0,
+        streak: 0,
+        treesGrown: 0,
+        lastSessionDate: null, // 'YYYY-MM-DD', used to calculate streaks
+      });
+    }
+  }
+
+  signupBtn.addEventListener('click', async () => {
+    authError.textContent = '';
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+    if (!username || !password) {
+      authError.textContent = 'Enter a username and password.';
+      return;
+    }
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, usernameToEmail(username), password);
+      await ensureUserDoc(cred.user.uid, username);
+    } catch (err) {
+      // Firebase's own error messages mention "email" — reworded here since
+      // the user never typed one.
+      if (err.code === 'auth/email-already-in-use') {
+        authError.textContent = 'That username is already taken.';
+      } else if (err.code === 'auth/weak-password') {
+        authError.textContent = 'Password must be at least 6 characters.';
+      } else {
+        authError.textContent = 'Could not sign up. Try again.';
+      }
+    }
+  });
+
+  loginBtn.addEventListener('click', async () => {
+    authError.textContent = '';
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+    if (!username || !password) {
+      authError.textContent = 'Enter a username and password.';
+      return;
+    }
+    try {
+      await signInWithEmailAndPassword(auth, usernameToEmail(username), password);
+    } catch (err) {
+      authError.textContent = 'Incorrect username or password.';
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => signOut(auth));
+
+  // Fires on login, logout, AND once automatically when the page first
+  // loads (Firebase remembers the session), so this is the one place that
+  // keeps the UI in sync with whether someone's actually signed in.
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      authLoggedOut.style.display = 'none';
+      authLoggedIn.style.display = 'block';
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      currentUsernameEl.textContent = snap.exists() ? snap.data().username : user.email.split('@')[0];
+    } else {
+      authLoggedOut.style.display = 'block';
+      authLoggedIn.style.display = 'none';
+    }
+    renderLeaderboard(); // refresh so "you" highlighting matches who's signed in
+  });
+
+  // Called from finishSession() below when a session completes successfully.
+  // Updates hours/trees/streak in Firestore — this is what the leaderboard
+  // actually reads from.
+  async function recordCompletedSession(minutes) {
+    const user = auth.currentUser;
+    if (!user) return; // not signed in — nothing to save
+
+    const ref = doc(db, 'users', user.uid);
+    const snap = await getDoc(ref);
+    const data = snap.exists() ? snap.data() : { streak: 0, lastSessionDate: null };
+
+    const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+    let newStreak = data.streak || 0;
+    if (data.lastSessionDate === today) {
+      // already studied today — streak doesn't change again
+    } else if (data.lastSessionDate === yesterday) {
+      newStreak += 1; // continued the streak
+    } else {
+      newStreak = 1; // missed a day (or first session ever) — streak restarts
+    }
+
+    await updateDoc(ref, {
+      totalHours: increment(minutes / 60),
+      treesGrown: increment(1),
+      streak: newStreak,
+      lastSessionDate: today,
+    });
+
+    renderLeaderboard();
+  }
+
+  // ---------- Leaderboard ---------- 
+  // Pulled live from Firestore, sorted by whichever metric tab is active.
+  // Visible to everyone, but the "you" highlight only applies when signed in.
+  const lbTabs = document.getElementById('lbTabs');
+  const lbList = document.getElementById('lbList');
+  let activeMetric = 'totalHours';
+
+  const metricByTab = { hours: 'totalHours', streak: 'streak', trees: 'treesGrown' };
+  const metricLabels = {
+    totalHours: (v) => `${v.toFixed(1)} hrs`,
+    streak:     (v) => `${v} day${v === 1 ? '' : 's'}`,
+    treesGrown: (v) => `${v} tree${v === 1 ? '' : 's'}`,
+  };
+
+  async function renderLeaderboard() {
+    const q = query(collection(db, 'users'), orderBy(activeMetric, 'desc'), limit(10));
+    let snap;
+    try {
+      snap = await getDocs(q);
+    } catch (err) {
+      lbList.innerHTML = `<li class="lb-row">Couldn't load the leaderboard right now.</li>`;
+      return;
+    }
+
+    if (snap.empty) {
+      lbList.innerHTML = `<li class="lb-row">No one on the board yet — be the first!</li>`;
+      return;
+    }
+
+    const currentUid = auth.currentUser ? auth.currentUser.uid : null;
+    lbList.innerHTML = snap.docs.map((docSnap, index) => {
+      const person = docSnap.data();
+      const isYou = docSnap.id === currentUid;
+      return `
+        <li class="lb-row ${isYou ? 'you' : ''}">
+          <span class="lb-rank">${index + 1}</span>
+          <span class="lb-name">${person.username}</span>
+          <span class="lb-value">${metricLabels[activeMetric](person[activeMetric] || 0)}</span>
+        </li>
+      `;
+    }).join('');
+  }
+
+  lbTabs.addEventListener('click', (e) => {
+    const tab = e.target.closest('.lb-tab');
+    if (!tab) return;
+    activeMetric = metricByTab[tab.dataset.metric];
+    lbTabs.querySelectorAll('.lb-tab').forEach(t => {
+      t.classList.toggle('active', t === tab);
+    });
+    renderLeaderboard();
+  });
+
+  // ---------- Event wiring ----------
+  startBtn.addEventListener('click', () => {
+    if (isRunning || isDead) return; // can't start twice or restart a dead tree
+    startTimer();
+  });
+
+  resetBtn.addEventListener('click', resetSession);
+
+  lengthPicker.addEventListener('click', (e) => {
+    const btn = e.target.closest('.length-btn');
+    if (!btn || isRunning) return;
+    sessionMinutes = Number(btn.dataset.minutes);
+    resetSession();
+  });
+
+  // Initial paint — check for a session to restore before drawing the page
+  loadState();
+  render();
+  renderLeaderboard();
+</script>
+
+</body>
+</html>
