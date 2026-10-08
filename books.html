@@ -4,58 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Books | My Stuff</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: #0f0f0f;
-            color: #e5e5e5;
-            font-family: Georgia, serif;
-            max-width: 900px;
-            margin: auto;
-            padding: 50px;
+        :root { --ink: #1c2433; --muted: #5f6878; --pen: #2a4d8f; --red: #d98c8c; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { color: var(--ink); font-family: Georgia, serif; line-height: 1.6; }
+        a { color: var(--pen); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        a:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; }
+        .note { font-family: Caveat, "Segoe Script", "Bradley Hand", cursive; color: var(--pen); font-size: 1.5rem; }
+        h1 { font-size: 3.5rem; line-height: 1.15; margin: 24px 0 8px; }
+        body { background: #dde4da; }
+        .wrap { max-width: 640px; margin: 40px auto; padding: 0 20px 48px; }
+        .card {
+            position: relative;
+            display: block;
+            color: var(--ink);
+            margin: 0 0 28px;
+            padding: 56px 28px 64px;
+            background-color: #fbf8ef;
+            background-image:
+                linear-gradient(transparent 39px, var(--red) 39px, var(--red) 41px, transparent 41px),
+                linear-gradient(rgba(42, 77, 143, 0.18) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 28px;
+            background-position: 0 0, 0 71px;
+            box-shadow: 0 2px 8px rgba(30, 40, 30, 0.22);
+            border-radius: 3px;
         }
-
-        a {
-            color: #c9a86a;
-            text-decoration: none;
+        .card::after {
+            content: "";
+            position: absolute; left: 50%; bottom: 20px;
+            width: 14px; height: 14px; margin-left: -7px;
+            border-radius: 50%;
+            background: #dde4da;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
         }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        .book {
-            background: #171717;
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .book:hover {
-            border-color: #c9a86a;
-        }
+        .card:hover { text-decoration: none; }
+        .card:hover .title { color: var(--pen); }
+        .title { font-family: "Courier New", Courier, monospace; font-size: 1.5rem; font-weight: bold; line-height: 28px; }
+        .author { font-family: "Courier New", Courier, monospace; color: var(--muted); line-height: 28px; }
+        .open { font-family: "Courier New", Courier, monospace; color: var(--pen); line-height: 28px; margin-top: 28px; }
     </style>
 </head>
 <body>
-
-    <a href="index.html">← Home</a>
-
+<div class="wrap">
+    <a href="index.html">&larr; Home</a>
     <h1>Books</h1>
-<a href="Marcus-Aurelius-Meditations.pdf" target="_blank">
-    <div class="book">
-    <h2>
-        
-            Meditations
-    </h2>
+    <p class="note" style="margin-bottom:32px">Free pdfs so you can read!</p>
+
+    <a class="card" href="Marcus-Aurelius-Meditations.pdf" target="_blank">
+        <div class="title">Meditations</div>
+        <div class="author">Marcus Aurelius</div>
+        <div class="open">Open PDF</div>
+    </a>
+
+    <a class="card" href="the_enchiridion_epictetus.pdf" target="_blank">
+        <div class="title">Enchiridion</div>
+        <div class="author">Epictetus</div>
+        <div class="open">Open PDF</div>
+    </a>
 </div>
-</a>
- <a href="the_enchiridion_epictetus.pdf" target="_blank">
-<div class="book">
-    <h2>
-            Enchiridion
-    </h2>
-</div>
- </a>
 </body>
 </html>
