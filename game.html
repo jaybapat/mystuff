@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>AP Study Challenge</title>
+</head>
+<body>
+	<main>
+		<h1>AP Study Challenge</h1>
+		<p>Choose a course and test your knowledge. Answer as many questions as you can.</p>
+
+		<section id="setup" aria-labelledby="setup-title">
+			<h2 id="setup-title">Start a game</h2>
+			<label for="course">AP course</label>
+			<select id="course">
+<select id="course">
+    <optgroup label="Sciences">
+        <option value="biology">AP Biology</option>
+        <option value="chemistry">AP Chemistry</option>
+        <option value="environmental-science">AP Environmental Science</option>
+    </optgroup>
+
+    <optgroup label="Math">
+        <option value="calculus-ab">AP Calculus AB</option>
+        <option value="calculus-bc">AP Calculus BC</option>
+        <option value="precalculus">AP Precalculus</option>
+        <option value="statistics">AP Statistics</option>
+    </optgroup>
+
+    <optgroup label="Physics">
+        <option value="physics-1">AP Physics 1</option>
+        <option value="physics-2">AP Physics 2</option>
+        <option value="physics-c-mechanics">AP Physics C: Mechanics</option>
+        <option value="physics-c-em">AP Physics C: Electricity &amp; Magnetism</option>
+    </optgroup>
+
+    <optgroup label="Computer Science">
+        <option value="csa">AP Computer Science A</option>
+        <option value="csp">AP Computer Science Principles</option>
+    </optgroup>
+
+    <optgroup label="History & Social Science">
+        <option value="human-geography">AP Human Geography</option>
+        <option value="psychology">AP Psychology</option>
+        <option value="world-history">AP World History: Modern</option>
+        <option value="us-history">AP U.S. History</option>
+        <option value="european-history">AP European History</option>
+        <option value="african-american-studies">AP African American Studies</option>
+        <option value="us-government">AP U.S. Government &amp; Politics</option>
+        <option value="comparative-government">AP Comparative Government &amp; Politics</option>
+        <option value="microeconomics">AP Microeconomics</option>
+        <option value="macroeconomics">AP Macroeconomics</option>
+    </optgroup>
+
+    <optgroup label="English">
+        <option value="english-language">AP English Language &amp; Composition</option>
+        <option value="english-literature">AP English Literature &amp; Composition</option>
+    </optgroup>
+
+    <optgroup label="Capstone">
+        <option value="seminar">AP Seminar</option>
+        <option value="research">AP Research</option>
+    </optgroup>
+
+    <optgroup label="Arts">
+        <option value="art-history">AP Art History</option>
+        <option value="music-theory">AP Music Theory</option>
+        <option value="2d-art-design">AP 2-D Art &amp; Design</option>
+        <option value="3d-art-design">AP 3-D Art &amp; Design</option>
+        <option value="drawing">AP Drawing</option>
+    </optgroup>
+
+    <optgroup label="Languages">
+        <option value="chinese">AP Chinese Language &amp; Culture</option>
+        <option value="french">AP French Language &amp; Culture</option>
+        <option value="german">AP German Language &amp; Culture</option>
+        <option value="italian">AP Italian Language &amp; Culture</option>
+        <option value="japanese">AP Japanese Language &amp; Culture</option>
+  
+    <option value="placeholder">More Coming Soon...</option>
+</select>
+			<button id="start" type="button">Start game</button>
+		</section>
+
+		<section id="game" hidden aria-live="polite">
+			<p id="progress"></p>
+			<h2 id="question"></h2>
+			<div id="answers"></div>
+			<p id="feedback"></p>
+			<button id="next" type="button" hidden>Next question</button>
+		</section>
+
+		<section id="results" hidden aria-live="polite">
+			<h2>Game complete</h2>
+			<p id="score"></p>
+			<button id="play-again" type="button">Play again</button>
+		</section>
+	</main>
+
+	<script>
+		// Original practice questions for the selected AP course.
+		const questionBank = {
+    biology: [],
+    chemistry: [],
+    environmentalScience: [],
+    calculusAB: [],
+    calculusBC: [],
+    precalculus: [],
+    statistics: [],
+    physics1: [],
+    physics2: [],
+    physicsCMechanics: [],
+    physicsCEM: [],
+    csa: [],
+    csp: [],
+    humanGeography: [],
+    psychology: [],
+    worldHistory: [],
+    usHistory: [],
+    europeanHistory: [],
+    africanAmericanStudies: [],
+    usGovernment: [],
+    comparativeGovernment: [],
+    microeconomics: [],
+    macroeconomics: [],
+    englishLanguage: [],
+    englishLiterature: [],
+    seminar: [],
+    research: [],
+    artHistory: [],
+    musicTheory: [],
+    art2D: [],
+    art3D: [],
+    drawing: [],
+    chinese: [],
+    french: [],
+    german: [],
+    italian: [],
+    japanese: [],
+    latin: [],
+    spanishLanguage: [],
+    spanishLiterature: []
+};
+
+		const setup = document.querySelector('#setup');
+		const game = document.querySelector('#game');
+		const results = document.querySelector('#results');
+		const questionEl = document.querySelector('#question');
+		const answersEl = document.querySelector('#answers');
+		const feedbackEl = document.querySelector('#feedback');
+		const progressEl = document.querySelector('#progress');
+		let questions = [];
+		let current = 0;
+		let score = 0;
+
+		function startGame() {
+			questions = [...questionBank[document.querySelector('#course').value]]
+				.sort(() => Math.random() - 0.5);
+			current = 0;
+			score = 0;
+			setup.hidden = true;
+			results.hidden = true;
+			game.hidden = false;
+			showQuestion();
+		}
+
+		function showQuestion() {
+			const item = questions[current];
+			progressEl.textContent = `Question ${current + 1} of ${questions.length} · Score: ${score}`;
+			questionEl.textContent = item.q;
+			feedbackEl.textContent = '';
+			answersEl.replaceChildren();
+			document.querySelector('#next').hidden = true;
+			item.a.forEach((answer, index) => {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.textContent = answer;
+				button.addEventListener('click', () => chooseAnswer(index));
+				answersEl.append(button);
+			});
+		}
+
+		function chooseAnswer(index) {
+			const item = questions[current];
+			const buttons = answersEl.querySelectorAll('button');
+			buttons.forEach(button => button.disabled = true);
+			if (index === item.correct) {
+				score++;
+				feedbackEl.textContent = 'Correct!';
+			} else {
+				feedbackEl.textContent = `Not quite. Correct answer: ${item.a[item.correct]}`;
+			}
+			progressEl.textContent = `Question ${current + 1} of ${questions.length} · Score: ${score}`;
+			document.querySelector('#next').hidden = false;
+		}
+
+		function nextQuestion() {
+			current++;
+			if (current < questions.length) {
+				showQuestion();
+			} else {
+				game.hidden = true;
+				results.hidden = false;
+				document.querySelector('#score').textContent = `You scored ${score} out of ${questions.length}.`;
+			}
+		}
+
+		document.querySelector('#start').addEventListener('click', startGame);
+		document.querySelector('#next').addEventListener('click', nextQuestion);
+		document.querySelector('#play-again').addEventListener('click', () => {
+			results.hidden = true;
+			setup.hidden = false;
+		});
+	</script>
+</body>
+</html>
