@@ -4,143 +4,505 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>AP Study Challenge</title>
+	<style>
+
+	:root {
+    --bg: #f6f1e8;
+    --paper: #fff8dc;
+    --paper-2: #fef3a7;
+    --accent: #d97706;
+    --accent-dark: #92400e;
+    --text: #2d2d2d;
+    --muted: #6b7280;
+    --border: #e5d3a3;
+
+    font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+footer {
+	text-align: left;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--accent-dark);
+	margin-bottom: 15 px;
+}
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: clamp(1rem, 5vw, 4rem);
+    color: var(--text);
+    background:
+        radial-gradient(circle at top left,
+        rgba(251, 191, 36, 0.15),
+        transparent 25%),
+        var(--bg);
+}
+
+main {
+    width: min(100%, 900px);
+    margin: 0 auto;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    color: var(--accent-dark);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+main > p {
+    margin: 0.9rem 0 2rem;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+section {
+    background: var(--paper);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.08),
+        6px 6px 0 rgba(217,119,6,.08);
+}
+
+section[hidden],
+[hidden] {
+    display: none;
+}
+
+h2 {
+    margin: 0 0 1.25rem;
+    color: var(--accent-dark);
+    font-size: 1.6rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+select,
+button {
+    width: 100%;
+    min-height: 3.25rem;
+    font: inherit;
+}
+
+select {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+    background: white;
+    color: var(--text);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+}
+
+button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 0.9rem 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+button:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background: #c7c7c7;
+    color: #666;
+    cursor: default;
+}
+
+button:focus-visible,
+select:focus-visible {
+    outline: 3px solid #f59e0b;
+    outline-offset: 2px;
+}
+
+#progress {
+    color: var(--accent-dark);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+#question {
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+}
+
+#game {
+    color: white;
+    background: linear-gradient(145deg, #7e0303, #c42e00);
+    border: 0;
+    box-shadow: 0 12px 32px rgba(37, 7, 107, .24);
+}
+
+#game h2 {
+    color: white;
+}
+
+#question {
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: white;
+    color: var(--text);
+    font-size: clamp(1.25rem, 3vw, 1.8rem);
+    font-weight: 700;
+    text-align: center;
+}
+
+#game #progress {
+    color: #fef08a;
+}
+
+#answers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+#answers button {
+    min-height: 5rem;
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.05rem;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+#answers button:nth-child(4n + 1) {
+    background: #ffb990;
+}
+
+#answers button:nth-child(4n + 2) {
+    background: #c0f5f1;
+}
+
+#answers button:nth-child(4n + 3) {
+    background: #ffe190;
+}
+
+#answers button:nth-child(4n) {
+    background: #b9ffa8;
+}
+
+#answers button:hover:not(:disabled) {
+    filter: brightness(1.12);
+}
+
+#feedback {
+    min-height: 1.5rem;
+    margin: 1.25rem 0;
+    color: #bbf7d0;
+    font-weight: 700;
+}
+
+#feedback.incorrect {
+    color: #ff0000;
+}
+
+#game #next {
+    background: white;
+    color: #9e031d;
+}
+
+#score {
+    color: var(--accent-dark);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+#next,
+#play-again {
+    margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media (max-width: 600px) {
+    #answers {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 </head>
 <body>
 	<main>
 		<h1>AP Study Challenge</h1>
 		<p>Choose a course and test your knowledge. Answer as many questions as you can.</p>
 
-		<section id="setup" aria-labelledby="setup-title">
-			<h2 id="setup-title">Start a game</h2>
-			<label for="course">AP course</label>
-			<select id="course">
-<select id="course">
-    <optgroup label="Sciences">
-        <option value="biology">AP Biology</option>
-        <option value="chemistry">AP Chemistry</option>
-        <option value="environmental-science">AP Environmental Science</option>
-    </optgroup>
+<section id="setup" aria-labelledby="setup-title">
+    <h2 id="setup-title">Start a game</h2>
 
-    <optgroup label="Math">
-        <option value="calculus-ab">AP Calculus AB</option>
-        <option value="calculus-bc">AP Calculus BC</option>
-        <option value="precalculus">AP Precalculus</option>
-        <option value="statistics">AP Statistics</option>
-    </optgroup>
+    <label for="course">AP course</label>
 
-    <optgroup label="Physics">
-        <option value="physics-1">AP Physics 1</option>
-        <option value="physics-2">AP Physics 2</option>
-        <option value="physics-c-mechanics">AP Physics C: Mechanics</option>
-        <option value="physics-c-em">AP Physics C: Electricity &amp; Magnetism</option>
-    </optgroup>
+    <select id="course">
+        <optgroup label="Sciences">
+            <option value="biology">AP Biology</option>
+            <option value="chemistry">AP Chemistry</option>
+            <option value="environmentalScience">AP Environmental Science</option>
+        </optgroup>
 
-    <optgroup label="Computer Science">
-        <option value="csa">AP Computer Science A</option>
-        <option value="csp">AP Computer Science Principles</option>
-    </optgroup>
+        <optgroup label="Math">
+            <option value="calculusAB">AP Calculus AB</option>
+            <option value="calculusBC">AP Calculus BC</option>
+            <option value="precalculus">AP Precalculus</option>
+            <option value="statistics">AP Statistics</option>
+        </optgroup>
 
-    <optgroup label="History & Social Science">
-        <option value="human-geography">AP Human Geography</option>
-        <option value="psychology">AP Psychology</option>
-        <option value="world-history">AP World History: Modern</option>
-        <option value="us-history">AP U.S. History</option>
-        <option value="european-history">AP European History</option>
-        <option value="african-american-studies">AP African American Studies</option>
-        <option value="us-government">AP U.S. Government &amp; Politics</option>
-        <option value="comparative-government">AP Comparative Government &amp; Politics</option>
-        <option value="microeconomics">AP Microeconomics</option>
-        <option value="macroeconomics">AP Macroeconomics</option>
-    </optgroup>
+        <optgroup label="Physics">
+            <option value="physics1">AP Physics 1</option>
+            <option value="physics2">AP Physics 2</option>
+            <option value="physicsCMechanics">AP Physics C: Mechanics</option>
+            <option value="physicsCEM">AP Physics C: Electricity &amp; Magnetism</option>
+        </optgroup>
 
-    <optgroup label="English">
-        <option value="english-language">AP English Language &amp; Composition</option>
-        <option value="english-literature">AP English Literature &amp; Composition</option>
-    </optgroup>
+        <optgroup label="Computer Science">
+            <option value="csa">AP Computer Science A</option>
+            <option value="csp">AP Computer Science Principles</option>
+        </optgroup>
 
-    <optgroup label="Capstone">
-        <option value="seminar">AP Seminar</option>
-        <option value="research">AP Research</option>
-    </optgroup>
+        <optgroup label="History & Social Science">
+            <option value="humanGeography">AP Human Geography</option>
+            <option value="psychology">AP Psychology</option>
+            <option value="worldHistory">AP World History: Modern</option>
+            <option value="usHistory">AP U.S. History</option>
+            <option value="europeanHistory">AP European History</option>
+            <option value="africanAmericanStudies">AP African American Studies</option>
+            <option value="usGovernment">AP U.S. Government & Politics</option>
+			<option value="comparativeGovernment">AP Comparative Government & Politics</option>
+			<option value="microeconomics">AP Microeconomics</option>
+			<option value="macroeconomics">AP Macroeconomics</option>
+		</optgroup>
 
-    <optgroup label="Arts">
-        <option value="art-history">AP Art History</option>
-        <option value="music-theory">AP Music Theory</option>
-        <option value="2d-art-design">AP 2-D Art &amp; Design</option>
-        <option value="3d-art-design">AP 3-D Art &amp; Design</option>
-        <option value="drawing">AP Drawing</option>
-    </optgroup>
+		<optgroup label="English">
+			<option value="englishLanguage">AP English Language & Composition</option>
+			<option value="englishLiterature">AP English Literature & Composition</option>
+			<option value="seminar">AP Seminar</option>
+			<option value="research">AP Research</option>
+		</optgroup>
 
-    <optgroup label="Languages">
-        <option value="chinese">AP Chinese Language &amp; Culture</option>
-        <option value="french">AP French Language &amp; Culture</option>
-        <option value="german">AP German Language &amp; Culture</option>
-        <option value="italian">AP Italian Language &amp; Culture</option>
-        <option value="japanese">AP Japanese Language &amp; Culture</option>
-  
-    <option value="placeholder">More Coming Soon...</option>
-</select>
-			<button id="start" type="button">Start game</button>
-		</section>
+		<optgroup label="Arts">
+			<option value="artHistory">AP Art History</option>
+			<option value="musicTheory">AP Music Theory</option>
+			<option value="art2D">AP 2-D Art and Design</option>
+			<option value="art3D">AP 3-D Art and Design</option>
+			<option value="drawing">AP Drawing</option>
+		</optgroup>
 
-		<section id="game" hidden aria-live="polite">
-			<p id="progress"></p>
-			<h2 id="question"></h2>
-			<div id="answers"></div>
-			<p id="feedback"></p>
-			<button id="next" type="button" hidden>Next question</button>
-		</section>
+		<optgroup label="World Languages">
+			<option value="chinese">AP Chinese Language & Culture</option>
+			<option value="french">AP French Language & Culture</option>
+			<option value="german">AP German Language & Culture</option>
+			<option value="italian">AP Italian Language & Culture</option>
+			<option value="japanese">AP Japanese Language & Culture</option>
+			<option value="latin">AP Latin</option>
+			<option value="spanishLanguage">AP Spanish Language & Culture</option>
+			<option value="spanishLiterature">AP Spanish Literature & Culture</option>
+		</optgroup>
+	</select>
 
-		<section id="results" hidden aria-live="polite">
-			<h2>Game complete</h2>
-			<p id="score"></p>
-			<button id="play-again" type="button">Play again</button>
-		</section>
+	<button id="start" type="button">Start game</button>
+	</section>
+
+	<section id="game" aria-labelledby="question" hidden>
+		<p id="progress" aria-live="polite"></p>
+		<h2 id="question"></h2>
+		<div id="answers"></div>
+		<p id="feedback" aria-live="polite"></p>
+		<button id="next" type="button" hidden>Next</button>
+	</section>
+
+	<section id="results" aria-labelledby="results-title" hidden>
+		<h2 id="results-title">Game complete!</h2>
+		<p id="score"></p>
+		<button id="play-again" type="button">Play again</button>
+	</section>
 	</main>
 
 	<script>
 		// Original practice questions for the selected AP course.
 		const questionBank = {
-    biology: [],
-    chemistry: [],
-    environmentalScience: [],
-    calculusAB: [],
-    calculusBC: [],
-    precalculus: [],
-    statistics: [],
-    physics1: [],
-    physics2: [],
-    physicsCMechanics: [],
-    physicsCEM: [],
-    csa: [],
-    csp: [],
-    humanGeography: [],
-    psychology: [],
-    worldHistory: [],
-    usHistory: [],
-    europeanHistory: [],
-    africanAmericanStudies: [],
-    usGovernment: [],
-    comparativeGovernment: [],
-    microeconomics: [],
-    macroeconomics: [],
-    englishLanguage: [],
-    englishLiterature: [],
-    seminar: [],
-    research: [],
-    artHistory: [],
-    musicTheory: [],
-    art2D: [],
-    art3D: [],
-    drawing: [],
-    chinese: [],
-    french: [],
-    german: [],
-    italian: [],
-    japanese: [],
-    latin: [],
-    spanishLanguage: [],
-    spanishLiterature: []
+    biology: [
+    { q: "Which organelle is known as the powerhouse of the cell?", a: ["Mitochondrion", "Nucleus", "Ribosome", "Golgi apparatus"], correct: 0 }
+],
+
+chemistry: [
+    { q: "What is the chemical symbol for gold?", a: ["Au", "Ag", "Gd", "Go"], correct: 0 }
+],
+
+environmentalScience: [
+    { q: "Which greenhouse gas is most commonly produced by burning fossil fuels?", a: ["Carbon dioxide", "Oxygen", "Nitrogen", "Helium"], correct: 0 }
+],
+
+calculusAB: [
+    { q: "What is the derivative of x²?", a: ["2x", "x", "x²", "2"], correct: 0 }
+],
+
+calculusBC: [
+    { q: "What is the integral of 1/x?", a: ["ln|x| + C", "1/x² + C", "x + C", "e^x + C"], correct: 0 }
+],
+
+precalculus: [
+    { q: "How do you find a horizontal asymptote of a rational function?", a: ["Compare the degrees of the numerator and denominator", "Set the numerator equal to zero", "Set the denominator equal to zero", "Take the derivative"], correct: 0 }
+],
+
+statistics: [
+    { q: "What does a p-value measure?", a: ["Evidence against the null hypothesis", "The mean of a sample", "Population variance", "Standard deviation"], correct: 0 }
+],
+
+physics1: [
+    { q: "What is the SI unit of force?", a: ["Newton", "Joule", "Watt", "Pascal"], correct: 0 }
+],
+
+physics2: [
+    { q: "What type of wave is light?", a: ["Electromagnetic", "Mechanical", "Sound", "Seismic"], correct: 0 }
+],
+
+physicsCMechanics: [
+    { q: "According to Newton's Second Law, force equals?", a: ["Mass × Acceleration", "Mass ÷ Acceleration", "Velocity × Time", "Momentum ÷ Time"], correct: 0 }
+],
+
+physicsCEM: [
+    { q: "What particle carries a negative electric charge?", a: ["Electron", "Proton", "Neutron", "Photon"], correct: 0 }
+],
+
+csa: [
+    { q: "What keyword is used to create a new object in Java?", a: ["new", "class", "object", "make"], correct: 0 }
+],
+
+csp: [
+    { q: "What does CPU stand for?", a: ["Central Processing Unit", "Computer Program Utility", "Central Program Unit", "Computer Processing Utility"], correct: 0 }
+],
+
+humanGeography: [
+    { q: "What is the process of people moving from rural areas to cities called?", a: ["Urbanization", "Suburbanization", "Migration", "Globalization"], correct: 0 }
+],
+
+psychology: [
+    { q: "Which part of the brain is important for forming new memories?", a: ["Hippocampus", "Medulla", "Amygdala", "Cerebellum"], correct: 0 }
+],
+
+worldHistory: [
+    { q: "Which civilization built Machu Picchu?", a: ["Inca", "Maya", "Aztec", "Roman"], correct: 0 }
+],
+
+usHistory: [
+    { q: "Which amendment abolished slavery in the United States?", a: ["13th", "14th", "15th", "19th"], correct: 0 }
+],
+
+europeanHistory: [
+    { q: "What movement began in Italy during the 1300s?", a: ["Reformation", "Renaissance", "Enlightenment", "Industrial Revolution"], correct: 1 }
+],
+
+africanAmericanStudies: [
+    { q: "Who wrote 'Narrative of the Life of Frederick Douglass'?", a: ["Frederick Douglass", "W.E.B. Du Bois", "Booker T. Washington", "Martin Luther King Jr."], correct: 0 }
+],
+
+usGovernment: [
+    { q: "How many branches does the U.S. government have?", a: ["3", "2", "4", "5"], correct: 0 }
+],
+
+comparativeGovernment: [
+    { q: "What is a democracy?", a: ["Government by the people", "Rule by a king", "Military rule", "One-party rule"], correct: 0 }
+],
+
+microeconomics: [
+    { q: "What happens to quantity demanded when price increases?", a: ["Generally decreases", "Generally increases", "Stays the same", "Becomes zero"], correct: 0 }
+],
+
+macroeconomics: [
+    { q: "What does GDP stand for?", a: ["Gross Domestic Product", "General Domestic Production", "Gross Demand Percentage", "Government Domestic Product"], correct: 0 }
+],
+
+englishLanguage: [
+    { q: "What is the primary purpose of rhetorical analysis?", a: ["Examine how an author persuades an audience", "Summarize a story", "Identify grammar mistakes", "Translate text"], correct: 0 }
+],
+
+englishLiterature: [
+    { q: "What is a theme?", a: ["A central message or idea", "The setting", "The main character", "The plot twist"], correct: 0 }
+],
+
+seminar: [
+    { q: "What is a key component of AP Seminar?", a: ["Team and individual research projects", "Solving calculus problems", "Conducting science labs", "Learning coding"], correct: 0 }
+],
+
+research: [
+    { q: "What is the primary goal of AP Research?", a: ["Conduct an original research study", "Memorize historical facts", "Write fiction", "Learn programming"], correct: 0 }
+],
+
+artHistory: [
+    { q: "Who painted the Mona Lisa?", a: ["Leonardo da Vinci", "Michelangelo", "Raphael", "Donatello"], correct: 0 }
+],
+
+musicTheory: [
+    { q: "How many notes are in a major scale?", a: ["7", "5", "6", "8"], correct: 0 }
+],
+
+art2D: [
+    { q: "Which element of art refers to lightness and darkness?", a: ["Value", "Line", "Texture", "Shape"], correct: 0 }
+],
+
+art3D: [
+    { q: "What is sculpture considered?", a: ["Three-dimensional art", "Two-dimensional art", "Performance art", "Digital media"], correct: 0 }
+],
+
+drawing: [
+    { q: "Which technique uses closely spaced parallel lines for shading?", a: ["Hatching", "Blending", "Stippling", "Smudging"], correct: 0 }
+],
+
+chinese: [
+    { q: "Which writing system is used in Chinese?", a: ["Characters", "Alphabet", "Cyrillic", "Devanagari"], correct: 0 }
+],
+
+french: [
+    { q: "What is the French word for 'hello'?", a: ["Bonjour", "Hola", "Ciao", "Hallo"], correct: 0 }
+],
+
+german: [
+    { q: "What is the German word for 'thank you'?", a: ["Danke", "Merci", "Gracias", "Grazie"], correct: 0 }
+],
+
+italian: [
+    { q: "What is the Italian word for 'goodbye'?", a: ["Arrivederci", "Bonjour", "Hallo", "Gracias"], correct: 0 }
+],
+
+japanese: [
+    { q: "Which Japanese script is commonly used alongside kanji?", a: ["Hiragana", "Cyrillic", "Latin", "Arabic"], correct: 0 }
+],
+
+latin: [
+    { q: "What does the Latin phrase 'carpe diem' mean?", a: ["Seize the day", "Goodbye", "Live forever", "Knowledge is power"], correct: 0 }
+],
+
+spanishLanguage: [
+    { q: "What is the Spanish word for 'house'?", a: ["Casa", "Libro", "Escuela", "Perro"], correct: 0 }
+],
+
+spanishLiterature: [
+    { q: "Who wrote 'Don Quixote'?", a: ["Miguel de Cervantes", "Pablo Neruda", "Federico García Lorca", "Gabriel García Márquez"], correct: 0 }
+]
 };
 
 		const setup = document.querySelector('#setup');
@@ -155,21 +517,36 @@
 		let score = 0;
 
 		function startGame() {
-			questions = [...questionBank[document.querySelector('#course').value]]
-				.sort(() => Math.random() - 0.5);
-			current = 0;
-			score = 0;
-			setup.hidden = true;
-			results.hidden = true;
-			game.hidden = false;
-			showQuestion();
-		}
+    const course = document.querySelector('#course').value;
+
+    if (!questionBank[course]) {
+        alert("This course does not have any questions yet.");
+        return;
+    }
+
+    questions = [...questionBank[course]].sort(() => Math.random() - 0.5);
+
+    if (questions.length === 0) {
+        alert("No questions have been added for this course yet.");
+        return;
+    }
+
+    current = 0;
+    score = 0;
+
+    setup.hidden = true;
+    results.hidden = true;
+    game.hidden = false;
+
+    showQuestion();
+}
 
 		function showQuestion() {
 			const item = questions[current];
 			progressEl.textContent = `Question ${current + 1} of ${questions.length} · Score: ${score}`;
 			questionEl.textContent = item.q;
 			feedbackEl.textContent = '';
+			feedbackEl.classList.remove('incorrect');
 			answersEl.replaceChildren();
 			document.querySelector('#next').hidden = true;
 			item.a.forEach((answer, index) => {
@@ -190,6 +567,7 @@
 				feedbackEl.textContent = 'Correct!';
 			} else {
 				feedbackEl.textContent = `Not quite. Correct answer: ${item.a[item.correct]}`;
+				feedbackEl.classList.add('incorrect');
 			}
 			progressEl.textContent = `Question ${current + 1} of ${questions.length} · Score: ${score}`;
 			document.querySelector('#next').hidden = false;
@@ -212,6 +590,8 @@
 			results.hidden = true;
 			setup.hidden = false;
 		});
+
 	</script>
+<footer>MyStuff - Jay Bapat</footer>
 </body>
 </html>
