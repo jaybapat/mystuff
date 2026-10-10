@@ -37,7 +37,35 @@
 
 .tip h3:first-of-type {
     margin-top: 12px;
-}    
+}
+
+.ap-course-list {
+    display: grid;
+    gap: 18px;
+    margin-top: 32px;
+}
+
+.ap-course {
+    background: #f4efe7;
+    padding: 24px 22px 26px;
+    border-radius: 18px;
+    box-shadow: 0 4px 10px rgba(40, 35, 20, 0.08);
+    transform: none;
+}
+
+.ap-course ul {
+    margin-top: 10px;
+    padding-left: 18px;
+}
+
+.ap-course li + li {
+    margin-top: 6px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
     </style>
 </head>
 <body>
@@ -48,37 +76,78 @@
 
     <div class="grid">
         <div class="tip" style="--c:#fff3a8; --r:-1.5deg">
-            <h2>General Tips</h2>
-            <p>Working on it!</p>
+            <h2>Note-Taking</h2>
+            <ul>
+                <li><a href = https://www.youtube.com/watch?v=4AiXfFTkMNQ target="_blank">Cornell Note-Taking System</a></li>
+                <li><a href = https://www.youtube.com/watch?v=n7XBr1gQWn8 target="_blank">Flow Note Taking</a></li>
+                <li><a href = https://www.youtube.com/watch?v=AffuwyJZTQQ target="_blank">Note-Taking Summary</a></li>
+            </ul>
         </div>
         <div class="tip" style="--c:#cfe6fb; --r:1deg">
-            <h2>Spaced Repetition</h2>
-            <p>Review topics over increasing intervals.</p>
+            <h2>Study Habits</h2>
+            <ul>
+                <li><a href = https://www.youtube.com/watch?v=--Hu2w0s72Y target="_blank">Understanding, organization, and encoding.</a></li>
+                <li><a href = https://www.youtube.com/watch?v=fDbxPVn02VU target="_blank">The Active Recall Framework</a></li>
+                <li><a href = https://www.youtube.com/watch?v=sIbanATm-No target="_blank">Higher order thinking, deep learning</a></li>
+                <li><a href = https://www.youtube.com/watch?v=HpWFmM5BXCc target="_blank">Aceing Exams</a></li>
+            </ul>
         </div>
         <div class="tip" style="--c:#d3efc4; --r:1.5deg">
-            <h2>Practice Problems</h2>
-            <p>Working on it!</p>
+            <h2>Test Taking Strategies</h2>
+            <ul>
+                <li><a href = https://www.youtube.com/watch?v=6w8CHIeYdi4 target="_blank">Time Management, keyword spotting</a></li>
+                <li><a href = https://www.youtube.com/playlist?list=PLHV7uibENPDAEWQ0eLBWuiCNmprvExAB_ target="_blank">Answering MC Questions</a></li>
+                <li><a href = https://www.youtube.com/playlist?list=PLD15DF1C98D5F1197 target="_blank">Test Psychology</a></li>
+                <li><a href = https://www.youtube.com/watch?v=uzZ3mDF1hns target="_blank">Summary</a></li>
+            </ul>
         </div>
         <div class="tip" style="--c:#ffd6d6; --r:-1deg">
             <h2>Links</h2>
-            <p><a href = timer.html target="_blank">Pomodoro Timer</a></p>
+            <ul>
+                <li><a href = timer.html target="_blank">Pomodoro Timer</a></li>
+                <li><a href = game.html target="_blank">AP Study Challenge (beta)</a></li>
+            </ul>
         </div>
     </div>
-    <div class="tip" style="--c:#f8f4ea; --r:0deg; margin-top: 32px;">
-    <h2>AP Courses</h2>
 
-    <h3>AP Biology</h3>
-    <p>Working on it!</p>
+    <div class="ap-course-list">
+        <div class="ap-course">
+            <h2>AP Biology</h2>
+            <ul>
+                <li><a href="https://apstudents.collegeboard.org/courses/ap-biology/assessment" target="_blank">College Board</a></li>
+                <li><a href="https://apbiopenguins.weebly.com/" target="_blank">AP Biology Penguins</a></li>
+                <li><a href="https://www.bozemanscience.com/ap-biology" target="_blank">Bozeman Science</a></li>
+                <li><a href = "https://apbiolab.org" target="_blank">AP Bio Lab</a></li>
+            </ul>
+        </div>
 
-    <h3>AP Precalculus</h3>
-    <p>Working on it!</p>
+        <div class="ap-course">
+            <h2>AP Precalculus</h2>
+            <ul>
+                <li><a href = "https://apstudents.collegeboard.org/courses/ap-precalculus/assessment" target="_blank">College Board</a></li>
+                <li><a href = "https://www.khanacademy.org/math/precalculus" target="_blank">Khan Academy</a></li>
+                <li><a href = "https://www.flippedmath.com" target="_blank">Flipped Math</a></li>
+                <li><a href = "https://www.desmos.com/calculator" target="_blank">Desmos Calculator</a></li>
+            </ul>
+        </div>
 
-    <h3>AP Human Geography</h3>
-    <p>Working on it!</p>
+        <div class="ap-course">
+            <h2>AP Human Geography</h2>
+            <ul>
+                <li><a href = "https://apstudents.collegeboard.org/courses/ap-human-geography/assessment" target="_blank">College Board</a></li>
+                <li><a href = "https://youtube.com/@MrSinn" target="_blank">Mr. Sinn's Channel</a></li>
+                <li><a href = "https://albert.io/ap-human-geography" target="_blank">Albert.io</a></li>
+                <li><a href = "https://humangeoguy.com" target="_blank">The Human Geo Guy</a></li>
+            </ul>
+        </div>
 
-    <h3>Coming Soon</h3>
-    <p>Additional AP courses and resources will be added here.</p>
-</div>
+        <div class="ap-course">
+            <h2>Coming Soon</h2>
+            <ul>
+                <li>Additional AP courses and resources will be added here.</li>
+            </ul>
+        </div>
+    </div>
 </div>
 </body>
 </html>
