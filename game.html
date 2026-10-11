@@ -348,6 +348,7 @@ select:focus-visible {
 	</main>
 
 	<script>
+        const API_URL = "https://mystuff-jay-4305.vercel.app/api/generate";
 		// Original practice questions for the selected AP course.
 		const questionBank = {
     biology: [
@@ -522,29 +523,47 @@ spanishLiterature: [
 		let current = 0;
 		let score = 0;
 
-		function startGame() {
+		async function startGame() {
     const course = document.querySelector('#course').value;
 
-    if (!questionBank[course]) {
-        alert("This course does not have any questions yet.");
-        return;
+    try {
+        document.querySelector('#start').disabled = true;
+        document.querySelector('#start').textContent = "Generating questions...";
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                topic: course
+            })
+        });
+
+        const data = await response.json();
+
+        questions = data.questions.map(q => ({
+            q: q.question,
+            a: q.choices,
+            correct: q.answer
+        }));
+
+        current = 0;
+        score = 0;
+
+        setup.hidden = true;
+        results.hidden = true;
+        game.hidden = false;
+
+        showQuestion();
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to generate questions.");
+    } finally {
+        document.querySelector('#start').disabled = false;
+        document.querySelector('#start').textContent = "Start game";
     }
-
-    questions = [...questionBank[course]].sort(() => Math.random() - 0.5);
-
-    if (questions.length === 0) {
-        alert("No questions have been added for this course yet.");
-        return;
-    }
-
-    current = 0;
-    score = 0;
-
-    setup.hidden = true;
-    results.hidden = true;
-    game.hidden = false;
-
-    showQuestion();
 }
 
 		function showQuestion() {

@@ -3,15 +3,28 @@ export default async function handler(req, res) {
     const { topic = "general science" } = req.body || {};
 
     const prompt = `
-Generate 5 multiple-choice questions about ${topic}.
+Generate 10 high-quality AP exam style multiple-choice questions for ${topic}.
 
-Return ONLY valid JSON in this format:
+Requirements:
+- Appropriate for AP students
+- Four answer choices
+- Exactly one correct answer
+- Mix conceptual and factual questions
+- Avoid trivial memorization
+- Include a brief explanation
+
+Return ONLY valid JSON in this exact format:
 
 {
   "questions": [
     {
       "question": "...",
-      "choices": ["A", "B", "C", "D"],
+      "choices": [
+        "Answer A",
+        "Answer B",
+        "Answer C",
+        "Answer D"
+      ],
       "answer": 0,
       "explanation": "..."
     }
@@ -42,7 +55,10 @@ Return ONLY valid JSON in this format:
 
     const data = await response.json();
 
-    res.status(200).json(data);
+    const text =
+    data.candidates[0].content.parts[0].text;
+
+res.status(200).json(JSON.parse(text));
   } catch (error) {
     res.status(500).json({
       error: error.message
