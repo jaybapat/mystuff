@@ -1,0 +1,524 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e8dfd1">
+  <meta name="description" content="A public journal of everyday life, ideas, and the ongoing making of My Stuff.">
+  <title>Journal | My Stuff</title>
+
+  <style>
+    :root {
+      --ink: #1c2e49;
+      --muted: #64738a;
+      --blue: #315a93;
+      --blue-light: #d7e4f2;
+      --orange: #c96b2d;
+      --paper: #fffdf6;
+      --rule: rgba(99, 145, 193, .15);
+      --border: #d9d4c9;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 1px 18px;
+      background: #e8dfd1
+        radial-gradient(#d7c9b7 .8px, transparent .8px) 0 0 / 14px 14px;
+      color: var(--ink);
+      font: 16px/1.75 Georgia, "Times New Roman", serif;
+    }
+
+    a {
+      color: var(--blue);
+      text-underline-offset: .2em;
+    }
+
+    a:hover {
+      color: #203f70;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #a74d17;
+      outline-offset: 4px;
+    }
+
+    .wrap {
+      position: relative;
+      isolation: isolate;
+      max-width: 860px;
+      margin: 44px auto;
+      padding: 32px clamp(22px, 6vw, 54px) 38px
+        clamp(48px, 8vw, 78px);
+      background: var(--paper);
+      background-image:
+        linear-gradient(
+          90deg,
+          transparent 47px,
+          rgba(232,135,69,.55) 47px,
+          rgba(232,135,69,.55) 49px,
+          transparent 49px
+        ),
+        linear-gradient(var(--rule) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 32px;
+      background-position: 0 0, 0 31px;
+      box-shadow: 0 10px 30px rgba(44,44,48,.2);
+    }
+
+    .back-link {
+      display: inline-block;
+      font: 700 .92rem/1.4 Arial, sans-serif;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .journal-heading {
+      position: relative;
+      padding: 24px 0 20px;
+      border-bottom: 2px solid var(--blue);
+    }
+
+    .heading-scribble {
+      display: block;
+      color: var(--orange);
+      font: 700 .72rem/1.5 Arial, sans-serif;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      color: var(--blue);
+      font-size: clamp(2.6rem, 8vw, 3.5rem);
+      line-height: 1.1;
+    }
+
+    .intro {
+      max-width: 52ch;
+      margin: 9px 0 0;
+      color: var(--muted);
+    }
+
+    .heading-mark {
+      position: absolute;
+      right: 8px;
+      top: 22px;
+      color: var(--orange);
+      font: 700 2.5rem/1 Arial, sans-serif;
+      transform: rotate(12deg);
+      pointer-events: none;
+    }
+
+    .journal-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 0 4px;
+    }
+
+    .tools-label {
+      color: var(--muted);
+      font: 700 .76rem/1.4 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .filter {
+      border: 1px solid #bdcadd;
+      border-radius: 999px;
+      padding: 5px 11px;
+      background: rgba(255,253,246,.9);
+      color: var(--blue);
+      font: 700 .78rem/1.4 Arial, sans-serif;
+      cursor: pointer;
+    }
+
+    .filter:hover {
+      background: #edf3f9;
+    }
+
+    .filter[aria-pressed="true"] {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+    }
+
+    .entries {
+      margin-top: 8px;
+    }
+
+    .post {
+      position: relative;
+      margin: 24px 0;
+      padding: 23px clamp(18px, 4vw, 30px) 25px
+        clamp(28px, 5vw, 38px);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      background: rgba(255,253,246,.97);
+      box-shadow: 2px 4px 8px rgba(38,49,66,.08);
+      transition: box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .post::before {
+      content: "";
+      position: absolute;
+      top: 25px;
+      left: 12px;
+      width: 8px;
+      height: 8px;
+      border: 2px solid var(--blue);
+      border-radius: 50%;
+      box-shadow:
+        0 32px 0 -2px var(--paper),
+        0 32px 0 0 var(--blue),
+        0 64px 0 -2px var(--paper),
+        0 64px 0 0 var(--blue);
+    }
+
+    .post:hover {
+      box-shadow: 3px 7px 12px rgba(38,49,66,.13);
+    }
+
+    .post[hidden] {
+      display: none;
+    }
+
+    .post-topline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px 12px;
+      margin-bottom: 5px;
+    }
+
+    .post time {
+      color: var(--blue);
+      font: 700 .76rem/1.5 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .category {
+      display: inline-block;
+      border: 1px solid #d8a27e;
+      border-radius: 2px;
+      padding: 2px 6px;
+      color: #8a451c;
+      font: 700 .65rem/1.4 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .post h2 {
+      margin: 4px 0 11px;
+      padding-right: 8px;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 4vw, 1.65rem);
+      line-height: 1.3;
+    }
+
+    .post p {
+      margin: 0;
+    }
+
+    .post p + p {
+      margin-top: 12px;
+    }
+
+    .post a {
+      font-weight: 700;
+    }
+
+    .post ul,
+    .post ol {
+      padding-left: 1.35rem;
+    }
+
+    .post li + li {
+      margin-top: 5px;
+    }
+
+    .post-decoration {
+      position: absolute;
+      top: 19px;
+      right: 16px;
+      color: var(--orange);
+      font: 700 1.1rem/1 Arial, sans-serif;
+      pointer-events: none;
+    }
+
+    .post-corner {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-top: 19px solid var(--blue-light);
+      border-left: 19px solid transparent;
+    }
+
+    .empty-state {
+      margin: 24px 0;
+      padding: 20px;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state[hidden] {
+      display: none;
+    }
+
+    .journal-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(49,90,147,.25);
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .footer-stamp {
+      padding: 3px 8px;
+      border: 1px solid var(--orange);
+      color: var(--orange);
+      font: 700 .65rem/1.5 Arial, sans-serif;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+      }
+
+      .wrap {
+        min-height: 100vh;
+        margin: 0;
+        padding: 22px 17px 28px 43px;
+        background-image:
+          linear-gradient(
+            90deg,
+            transparent 27px,
+            rgba(232,135,69,.55) 27px,
+            rgba(232,135,69,.55) 29px,
+            transparent 29px
+          ),
+          linear-gradient(var(--rule) 1px, transparent 1px);
+      }
+
+      .heading-mark {
+        right: 2px;
+        top: 19px;
+        font-size: 2rem;
+      }
+
+      .journal-heading {
+        padding-top: 21px;
+      }
+
+      .post {
+        margin: 20px 0;
+        padding: 20px 15px 22px 25px;
+      }
+
+      .post::before {
+        left: 8px;
+      }
+
+      .post-decoration {
+        top: 14px;
+        right: 12px;
+      }
+
+      .post h2 {
+        padding-right: 12px;
+      }
+
+      .journal-tools {
+        align-items: flex-start;
+      }
+
+      .filters {
+        gap: 6px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .post {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <a class="back-link" href="../index.html">
+      &larr;Home
+    </a>
+
+    <header class="journal-heading">
+      <span class="heading-scribble">VOL. 01 / PUBLIC JOURNAL</span>
+      <h1>Journal</h1>
+      <p class="intro">
+        Notes from everyday life, things I'm thinking through, and the
+        ongoing story of this little corner of the internet.
+      </p>
+      <span class="heading-mark" aria-hidden="true">╱</span>
+    </header>
+
+    <section class="journal-tools" aria-label="Filter journal entries">
+      <span class="tools-label">Browse entries</span>
+
+      <div class="filters" role="group" aria-label="Entry category">
+        <button class="filter" type="button"
+          data-filter="all" aria-pressed="true">All</button>
+        <button class="filter" type="button"
+          data-filter="personal" aria-pressed="false">Personal</button>
+        <button class="filter" type="button"
+          data-filter="thoughts" aria-pressed="false">Thoughts</button>
+        <button class="filter" type="button"
+          data-filter="devlog" aria-pressed="false">Website log</button>
+      </div>
+    </section>
+
+    <section class="entries" id="entries" aria-label="Journal entries">
+
+      <!--
+        TO ADD AN ENTRY:
+        1. Copy one complete <article class="post"> block.
+        2. Update the date and datetime attribute (YYYY-MM-DD).
+        3. Set data-category to personal, thoughts, or devlog.
+        4. Update the category label, title, and paragraphs.
+        5. Put the newest entry first.
+        6. Replace or remove all sample entries before publishing.
+      -->
+
+      <article class="post" data-category="thoughts">
+        <span class="post-corner" aria-hidden="true"></span>
+        <span class="post-decoration" aria-hidden="true">↗</span>
+
+        <div class="post-topline">
+          <time datetime="2026-10-11">October 11, 2026</time>
+          <span class="category">Thoughts</span>
+        </div>
+
+        <h2>Future of AI</h2>
+        <p>
+          I'm still not sure what to write here! I know this is public, so I'll keep it uncontroversial.
+        </p>
+        <p>
+          Here's what I'm thinking about: The Paperclip Maximizer. It's basically this thought experiment: you tell an AI to make as many paperclips as it can. The idea is that the AI will do the task given EXACTLY as stated. The main problem is that humans prevent the AI from maximizing paperclip production, so the AI will try to eliminate this barrier. I thought about this and the Claude Mythos story from a while back (the one where it tried to escape its sandbox through gaslighting an actual employee). I wonder what the future of AI is. But there's hope: corrigibility. Basically, the AI is designed so it is indifferent to being turned off.
+        </p>
+      </article>
+
+      <article class="post" data-category="devlog">
+        <span class="post-corner" aria-hidden="true"></span>
+        <span class="post-decoration" aria-hidden="true">///</span>
+
+        <div class="post-topline">
+          <time datetime="2026-10-11">October 11, 2026</time>
+          <span class="category">Website log</span>
+        </div>
+
+        <h2>Version 1.49</h2>
+        <p>
+          Version 1.49! This is the first version of the website with a blog, but this will probably have the same content as the commit messages (maybe a bit more in depth?)
+        </p>
+        <p>
+          This version has one big change: the blog. I realized that this was becoming too much of a study website, so I wanted to add more personal stuff here too. Also, improved the AI prompt for more efficiency and accuracy. Also, I added some more info to About Me because I really didn't like the old gradient.
+        </p>
+      </article>
+
+      <article class="post" data-category="personal">
+        <span class="post-corner" aria-hidden="true"></span>
+        <span class="post-decoration" aria-hidden="true">↗</span>
+
+        <div class="post-topline">
+          <time datetime="2026-10-11">October 11, 2026</time>
+          <span class="category">Personal</span>
+        </div>
+
+        <h2>A note to start with</h2>
+        <p>
+          I'm honestly not sure what to write here, but I want to start this blog as a place to journal my thoughts. I've had a lot of fun building this website, so I'll start with that.
+        </p>
+        <p>
+          I learned a lot about web development! I learned how to integrate a Gemini model, which was pretty good. I think this will be good for future websites I make. Also, I learned about github (commits, push/pull requests) and vercel (deployments, environment variables).
+        </p>
+      </article>
+    </section>
+
+    <p class="empty-state" id="empty-state" hidden>
+      No entries in this category yet.
+    </p>
+
+    <footer class="journal-footer">
+      <span>END OF ENTRIES · MORE TO COME</span>
+      <span class="footer-stamp">PERSONAL LOG</span>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const buttons = document.querySelectorAll("[data-filter]");
+      const posts = document.querySelectorAll(".post[data-category]");
+      const emptyState = document.getElementById("empty-state");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const filter = button.dataset.filter;
+          let visibleCount = 0;
+
+          buttons.forEach((item) => {
+            item.setAttribute(
+              "aria-pressed",
+              String(item === button)
+            );
+          });
+
+          posts.forEach((post) => {
+            const show =
+              filter === "all" ||
+              post.dataset.category === filter;
+
+            post.hidden = !show;
+            if (show) visibleCount++;
+          });
+
+          emptyState.hidden = visibleCount !== 0;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
