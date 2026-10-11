@@ -524,11 +524,13 @@ spanishLiterature: [
 		let score = 0;
 
 		async function startGame() {
-    const course = document.querySelector('#course').value;
+    const courseSelect = document.querySelector('#course');
+    const course = courseSelect.selectedOptions[0].textContent.trim();
+    const startButton = document.querySelector('#start');
 
     try {
-        document.querySelector('#start').disabled = true;
-        document.querySelector('#start').textContent = "Generating questions...";
+        startButton.disabled = true;
+        startButton.textContent = "Generating questions...";
 
         const response = await fetch(API_URL, {
             method: "POST",
@@ -541,12 +543,35 @@ spanishLiterature: [
         });
 
         const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || `Question generation failed (${response.status}).`);
+        }
 
-        questions = data.questions.map(q => ({
-            q: q.question,
-            a: q.choices,
-            correct: q.answer
-        }));
+        console.log("API response:", data);
+
+        if (!Array.isArray(data.questions) || data.questions.length === 0) {
+            throw new Error("The question generator returned no questions.");
+        }
+
+        questions = data.questions.map((question, index) => {
+            if (
+                typeof question.question !== "string" ||
+                !Array.isArray(question.choices) ||
+                question.choices.length !== 4 ||
+                !question.choices.every(choice => typeof choice === "string") ||
+                !Number.isInteger(question.answer) ||
+                question.answer < 0 ||
+                question.answer >= question.choices.length
+            ) {
+                throw new Error(`The question generator returned an invalid question (${index + 1}).`);
+            }
+
+            return {
+                q: question.question,
+                a: question.choices,
+                correct: question.answer
+            };
+        });
 
         current = 0;
         score = 0;
@@ -559,10 +584,10 @@ spanishLiterature: [
 
     } catch (err) {
         console.error(err);
-        alert("Failed to generate questions.");
+        alert(err instanceof Error ? err.message : "Failed to generate questions.");
     } finally {
-        document.querySelector('#start').disabled = false;
-        document.querySelector('#start').textContent = "Start game";
+        startButton.disabled = false;
+        startButton.textContent = "Start game";
     }
 }
 
