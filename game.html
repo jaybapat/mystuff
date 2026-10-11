@@ -3,251 +3,528 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
 	<title>AP Study Challenge</title>
 	<style>
 
-	:root {
-    --bg: #f6f1e8;
-    --paper: #fff8dc;
-    --paper-2: #fef3a7;
-    --accent: #d97706;
-    --accent-dark: #92400e;
-    --text: #2d2d2d;
-    --muted: #6b7280;
-    --border: #e5d3a3;
-
-    font-family: "Poppins", "Segoe UI", sans-serif;
+:root {
+    --bg: #f5eee4;
+    --cream: #fffaf2;
+    --cream-dark: #f1e5d6;
+    --ink: #34271f;
+    --muted: #817166;
+    --terracotta: #c96845;
+    --rust: #a84d32;
+    --peach: #f0d2bd;
+    --caramel: #d8b68a;
+    --green: #75846b;
+    --line: #e8dbcc;
+    --success: #39704e;
+    --error: #ad4338;
+    --shadow: 0 14px 35px rgba(65, 42, 26, .07);
 }
 
 * {
     box-sizing: border-box;
 }
-footer {
-	text-align: left;
-	font-size: 1.25rem;
-	font-weight: 600;
-	color: var(--accent-dark);
-	margin-bottom: 15 px;
-}
+
 body {
     min-height: 100vh;
     margin: 0;
-    padding: clamp(1rem, 5vw, 4rem);
-    color: var(--text);
+    padding: clamp(1.2rem, 5vw, 4rem);
+    color: var(--ink);
     background:
-        radial-gradient(circle at top left,
-        rgba(251, 191, 36, 0.15),
-        transparent 25%),
+        radial-gradient(ellipse at 88% 7%, #edcfb8 0, transparent 24%),
+        radial-gradient(ellipse at 0% 70%, #ead9c5 0, transparent 26%),
         var(--bg);
+    font-family: "DM Sans", sans-serif;
+    line-height: 1.65;
 }
 
 main {
-    width: min(100%, 900px);
+    position: relative;
+    width: min(100%, 820px);
     margin: 0 auto;
 }
 
-h1 {
-    margin: 0;
-    font-size: clamp(2.5rem, 8vw, 4rem);
-    color: var(--accent-dark);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-}
-a {
-    color: inherit;
+main > a {
+    color: var(--muted);
+    font-size: .85rem;
+    font-weight: 600;
     text-decoration: none;
 }
 
-main > p {
-    margin: 0.9rem 0 2rem;
-    color: var(--muted);
-    line-height: 1.6;
+main > a:hover {
+    color: var(--rust);
 }
 
+/* Editorial headline */
+main > h1 {
+    position: relative;
+    max-width: 650px;
+    margin: 2rem 0 .7rem;
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: clamp(3.1rem, 8vw, 5.5rem);
+    font-weight: 400;
+    letter-spacing: -.055em;
+    line-height: 1.02;
+}
+
+main > h1::before {
+    content: "A LITTLE PRACTICE, A LOT OF PROGRESS";
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--rust);
+    font-family: "DM Sans", sans-serif;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+    line-height: 1.5;
+}
+
+main > h1::after {
+    content: "✳";
+    display: inline-block;
+    margin-left: .12em;
+    color: var(--terracotta);
+    font-family: "DM Sans", sans-serif;
+    font-size: .43em;
+    vertical-align: top;
+    transform: rotate(-12deg);
+}
+
+main > p {
+    max-width: 520px;
+    margin: 1rem 0 2.5rem;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.85;
+}
+
+/* Main cards */
 section {
-    background: var(--paper);
-    border: 2px solid var(--border);
-    border-radius: 24px;
-    padding: 1.75rem;
+    position: relative;
     margin-top: 1.5rem;
-    box-shadow:
-        0 8px 24px rgba(0,0,0,.08),
-        6px 6px 0 rgba(217,119,6,.08);
+    padding: clamp(1.4rem, 4vw, 2.5rem);
+    overflow: hidden;
+    border: 1px solid rgba(222, 203, 182, .75);
+    border-radius: 22px;
+    background: var(--cream);
+    box-shadow: var(--shadow);
 }
 
 section[hidden],
 [hidden] {
-    display: none;
+    display: none !important;
 }
 
 h2 {
-    margin: 0 0 1.25rem;
-    color: var(--accent-dark);
-    font-size: 1.6rem;
+    margin: 0 0 1.5rem;
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 400;
+    letter-spacing: -.03em;
+    line-height: 1.2;
+}
+
+#setup h2::after {
+    content: " ✳";
+    color: var(--terracotta);
+    font-family: "DM Sans", sans-serif;
+    font-size: .7em;
+}
+
+/* Decorative corner illustration */
+#setup::before {
+    content: "";
+    position: absolute;
+    top: -43px;
+    right: -38px;
+    width: 135px;
+    height: 135px;
+    border: 1px solid rgba(201, 104, 69, .3);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 12px rgba(201, 104, 69, .06),
+        0 0 0 25px rgba(201, 104, 69, .04);
+    pointer-events: none;
+}
+
+#setup::after {
+    content: "✦";
+    position: absolute;
+    top: 1.8rem;
+    right: 2.3rem;
+    color: var(--terracotta);
+    font-size: 1.7rem;
+    transform: rotate(12deg);
+    pointer-events: none;
+}
+
+#setup h2,
+#setup label,
+#setup select,
+#setup button {
+    position: relative;
+    z-index: 1;
 }
 
 label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: .65rem;
     color: var(--muted);
-    font-weight: 600;
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
 }
 
 select,
 button {
     width: 100%;
-    min-height: 3.25rem;
+    min-height: 3.4rem;
     font: inherit;
 }
 
-select {
-    margin-bottom: 1rem;
-    padding: 0.9rem 1rem;
-    background: white;
-    color: var(--text);
-    border: 2px solid var(--border);
-    border-radius: 16px;
+#setup label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
+select {
+    margin-bottom: 1.1rem;
+    padding: .9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fffdf9;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+#setup output {
+    padding: .15rem .6rem;
+    border-radius: 999px;
+    background: var(--peach);
+    color: var(--rust);
+    font-size: .8rem;
+    letter-spacing: 0;
+}
+
+#setup input[type="range"] {
+    display: block;
+    width: 100%;
+    margin: 0 0 1.1rem;
+    accent-color: var(--terracotta);
+    cursor: pointer;
+}
+
+select:focus-visible,
+input[type="range"]:focus-visible,
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid rgba(201, 104, 69, .45);
+    outline-offset: 4px;
+}
+
+/* Signature buttons */
 button {
-    background: var(--accent);
+    padding: .95rem 1.2rem;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: var(--terracotta);
     color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 0.9rem 1.2rem;
+    font-size: .92rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all .2s ease;
+    box-shadow: 0 4px 0 var(--rust);
+    transition: transform .18s ease, background .18s ease,
+                box-shadow .18s ease;
 }
 
 button:hover:not(:disabled) {
-    background: var(--accent-dark);
+    background: var(--rust);
     transform: translateY(-2px);
+    box-shadow: 0 6px 0 #783822;
+}
+
+button:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 0 #783822;
 }
 
 button:disabled {
-    background: #c7c7c7;
-    color: #666;
-    cursor: default;
+    background: #d7c9bc;
+    color: #75675c;
+    box-shadow: none;
+    cursor: wait;
 }
 
-button:focus-visible,
-select:focus-visible {
-    outline: 3px solid #f59e0b;
-    outline-offset: 2px;
+/* Quiz: the main visual focus */
+#game {
+    border: 1px solid #e8d8c7;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(240, 210, 189, .32), transparent 28%),
+        var(--cream);
 }
 
 #progress {
-    color: var(--accent-dark);
-    font-weight: 700;
-    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    margin: 0 0 1.7rem;
+    padding: 0 0 1rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--rust);
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
 }
 
 #question {
-    margin-bottom: 1.25rem;
-    line-height: 1.5;
-}
-
-#game {
-    color: white;
-    background: linear-gradient(145deg, #7e0303, #c42e00);
-    border: 0;
-    box-shadow: 0 12px 32px rgba(37, 7, 107, .24);
-}
-
-#game h2 {
-    color: white;
-}
-
-#question {
-    padding: 1.5rem;
+    position: relative;
+    margin: 0 0 1.7rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid #eddfd0;
     border-radius: 16px;
-    background: white;
-    color: var(--text);
-    font-size: clamp(1.25rem, 3vw, 1.8rem);
-    font-weight: 700;
-    text-align: center;
+    background: #fffdf9;
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: clamp(1.55rem, 4vw, 2.15rem);
+    font-weight: 400;
+    letter-spacing: -.025em;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
 }
 
-#game #progress {
-    color: #fef08a;
+#question::first-letter {
+    color: var(--ink);
 }
 
 #answers {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem;
+    gap: .85rem;
 }
 
 #answers button {
-    min-height: 5rem;
-    padding: 1rem 1.25rem;
-    border: 0;
-    border-radius: 12px;
-    color: white;
-    font-size: 1.05rem;
-    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    min-height: 5.2rem;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fffdf9;
+    color: var(--ink);
+    font-size: .92rem;
+    font-weight: 500;
+    line-height: 1.6;
+    text-align: left;
     overflow-wrap: anywhere;
+    box-shadow: none;
 }
 
 #answers button:nth-child(4n + 1) {
-    background: #ffb990;
+    border-bottom: 3px solid #d58b69;
 }
 
 #answers button:nth-child(4n + 2) {
-    background: #c0f5f1;
+    border-bottom: 3px solid #d8b68a;
 }
 
 #answers button:nth-child(4n + 3) {
-    background: #ffe190;
+    border-bottom: 3px solid #a7ae91;
 }
 
 #answers button:nth-child(4n) {
-    background: #b9ffa8;
+    border-bottom: 3px solid #c88d78;
 }
 
 #answers button:hover:not(:disabled) {
-    filter: brightness(1.12);
+    border-color: var(--terracotta);
+    background: #fff3e8;
+    color: var(--rust);
+    box-shadow: none;
+    transform: translateY(-2px);
+}
+
+#answers button:disabled {
+    opacity: 1;
+    cursor: default;
+    box-shadow: none;
 }
 
 #feedback {
     min-height: 1.5rem;
-    margin: 1.25rem 0;
-    color: #bbf7d0;
+    margin: 1.4rem 0 1rem;
+    color: var(--success);
+    font-size: .92rem;
     font-weight: 700;
 }
 
 #feedback.incorrect {
-    color: #ff0000;
+    color: var(--error);
 }
 
 #game #next {
-    background: white;
-    color: #9e031d;
+    background: var(--ink);
+    box-shadow: 0 4px 0 #1e1712;
+}
+
+#game #next:hover:not(:disabled) {
+    background: #514035;
+}
+
+/* Completion screen */
+#results {
+    text-align: center;
+    padding-block: clamp(2.2rem, 7vw, 4rem);
+    background:
+        radial-gradient(circle at 50% 0%, rgba(240, 210, 189, .6), transparent 42%),
+        var(--cream);
+}
+
+#results h2::before {
+    content: "✳ ";
+    color: var(--terracotta);
+    font-family: "DM Sans", sans-serif;
 }
 
 #score {
-    color: var(--accent-dark);
-    font-size: 1.25rem;
-    font-weight: 800;
+    margin: 1.3rem 0 2rem;
+    color: var(--rust);
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
 }
 
 #next,
 #play-again {
-    margin-top: 0.5rem;
+    margin-top: .5rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
-        scroll-behavior: auto !important;
-    }
+#play-again {
+    max-width: 280px;
 }
 
+/* Small screens */
 @media (max-width: 600px) {
+    body {
+        padding: 1.25rem 1rem 2rem;
+    }
+
+    main > h1 {
+        font-size: clamp(2.8rem, 12vw, 4rem);
+    }
+
+    main > p {
+        margin-bottom: 1.8rem;
+    }
+
+    section {
+        padding: 1.25rem;
+        border-radius: 17px;
+    }
+
+    #setup::before {
+        width: 100px;
+        height: 100px;
+    }
+
+    #setup::after {
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+
     #answers {
         grid-template-columns: 1fr;
     }
+
+    #answers button {
+        min-height: 3.8rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+    }
+}
+
+
+.study-doodle {
+    display: flex;
+    justify-content: flex-end;
+    height: 0;
+    margin-top: -1.5rem;
+    margin-bottom: 1.5rem;
+    padding-right: 1rem;
+    pointer-events: none;
+}
+
+.study-doodle svg {
+    width: 135px;
+    height: auto;
+    overflow: visible;
+    transform: rotate(3deg);
+}
+
+@media (max-width: 600px) {
+    .study-doodle {
+        margin-top: -.5rem;
+        margin-bottom: 1.3rem;
+    }
+
+    .study-doodle svg {
+        width: 100px;
+    }
+}
+/* Flashcard behind the home button */
+main > a {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1rem;
+    margin: 0.4rem 0 1.5rem 0.4rem;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1px solid #e4d2bd;
+    border-radius: 3px;
+    box-shadow:
+        4px 4px 0 var(--caramel),
+        7px 7px 0 rgba(168, 77, 50, 0.12);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transform: rotate(-2deg);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+/* Tiny decorative star */
+main > a::before {
+    content: "✳";
+    color: var(--terracotta);
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+main > a:hover {
+    transform: translateY(-2px) rotate(0deg);
+    box-shadow:
+        5px 6px 0 var(--caramel),
+        8px 9px 0 rgba(168, 77, 50, 0.12);
+}
+
+main > a:focus-visible {
+    outline: 3px solid var(--terracotta);
+    outline-offset: 5px;
 }
 </style>
 </head>
@@ -257,6 +534,29 @@ select:focus-visible {
 		<a href="index.html">&larr; Home</a>
 		<h1>AP Study Challenge</h1>
 		<p>Choose a course and test your knowledge. Answer as many questions as you can.</p>
+
+
+<div class="study-doodle" aria-hidden="true">
+    <svg viewBox="0 0 160 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 68 L91 68 L91 82 L18 82 Z" fill="#D8B68A"/>
+        <path d="M24 54 L97 54 L97 68 L24 68 Z" fill="#C96845"/>
+        <path d="M31 40 L104 40 L104 54 L31 54 Z" fill="#75846B"/>
+        <path d="M36 44 L99 44 M29 58 L92 58 M23 72 L86 72"
+              stroke="#FFF5E9" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M109 29 L109 12 L126 12 L126 29"
+              stroke="#34271F" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M104 30 Q117 23 131 30 L126 44 L109 44 Z"
+              fill="#D8B68A" stroke="#34271F" stroke-width="2"/>
+        <path d="M117 44 L117 52" stroke="#34271F" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M106 52 L128 52" stroke="#34271F" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M142 17 L144 23 L150 25 L144 27 L142 33 L140 27 L134 25 L140 23 Z"
+              fill="#C96845"/>
+        <path d="M15 24 L17 29 L22 31 L17 33 L15 38 L13 33 L8 31 L13 29 Z"
+              fill="#D8B68A"/>
+        <circle cx="135" cy="65" r="3" fill="#75846B"/>
+        <circle cx="146" cy="53" r="2" fill="#C96845"/>
+    </svg>
+</div>
 
 <section id="setup" aria-labelledby="setup-title">
     <h2 id="setup-title">Start a game</h2>
@@ -328,6 +628,12 @@ select:focus-visible {
 			<option value="spanishLiterature">AP Spanish Literature & Culture</option>
 		</optgroup>
 	</select>
+
+    <label for="question-count">Number of questions <output id="question-count-value" for="question-count">20</output></label>
+    <input id="question-count" type="range" min="1" max="40" step="1" value="20">
+
+    <label for="difficulty">Difficulty <output id="difficulty-value" for="difficulty">5</output></label>
+    <input id="difficulty" type="range" min="1" max="10" step="1" value="5">
 
 	<button id="start" type="button">Start game</button>
 	</section>
@@ -519,6 +825,14 @@ spanishLiterature: [
 		const answersEl = document.querySelector('#answers');
 		const feedbackEl = document.querySelector('#feedback');
 		const progressEl = document.querySelector('#progress');
+        const questionCountInput = document.querySelector('#question-count');
+        const difficultyInput = document.querySelector('#difficulty');
+        questionCountInput.addEventListener('input', () => {
+            document.querySelector('#question-count-value').textContent = questionCountInput.value;
+        });
+        difficultyInput.addEventListener('input', () => {
+            document.querySelector('#difficulty-value').textContent = difficultyInput.value;
+        });
 		let questions = [];
 		let current = 0;
 		let score = 0;
@@ -538,7 +852,9 @@ spanishLiterature: [
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                topic: course
+                topic: course,
+                count: Number(questionCountInput.value),
+                difficulty: Number(difficultyInput.value)
             })
         });
 
@@ -551,6 +867,9 @@ spanishLiterature: [
 
         if (!Array.isArray(data.questions) || data.questions.length === 0) {
             throw new Error("The question generator returned no questions.");
+        }
+        if (data.questions.length !== Number(questionCountInput.value)) {
+            throw new Error("The question generator returned an unexpected number of questions. Please try again.");
         }
 
         questions = data.questions.map((question, index) => {
