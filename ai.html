@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050906">
+    <title>AI Chat | My Stuff</title>
+    <style>
+        :root {
+            --desk: #050906;
+            --paper: #0c120e;
+            --ink: #e8f5e9;
+            --muted: #9db2a0;
+            --rule: #263b2a;
+            --pen: #39ff65;
+            --error: #ff8e83;
+        }
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 24px;
+            background:
+                radial-gradient(ellipse at 85% 15%, rgba(24, 107, 42, .12), transparent 38%),
+                var(--desk);
+            color: var(--ink);
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            line-height: 1.6;
+        }
+        body::before {
+            position: fixed;
+            z-index: 0;
+            inset: 0;
+            overflow: hidden;
+            color: #39ff65;
+            content: "01001000 01100101 01101100 01101100 01101111 00100000 01010111 01101111 01110010 01101100 01100100\A 01100100 01100001 01110100 01100001 00100000 01110011 01110100 01110010 01100101 01100001 01101101 00100000\A 00110001 00110000 00110001 00110000 00100000 01101101 01100101 01101101 01101111 01110010 01111001 00100000\A 01110011 01111001 01110011 01110100 01100101 01101101 00100000 01110010 01100101 01100001 01100100 01111001 00100000\A 01000011 01001111 01001110 01001110 01000101 01000011 01010100 01000101 01000100 00100000 00110001 00110000";
+            pointer-events: none;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font: 11px/1.9 ui-monospace, SFMono-Regular, Consolas, monospace;
+            letter-spacing: .16em;
+            opacity: .09;
+            mask-image: linear-gradient(90deg, transparent 4%, #000 30%, #000 94%, transparent);
+        }
+        button, select, textarea { font: inherit; }
+        button, select { min-height: 44px; }
+        button, a, select, textarea { accent-color: var(--pen); }
+        button:focus-visible, a:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: 2px solid var(--pen);
+            outline-offset: 3px;
+        }
+        .page {
+            position: relative;
+            z-index: 1;
+            width: min(100%, 900px);
+            margin: 0 auto;
+        }
+        .back { color: var(--pen); text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+        h1 { margin: 18px 0 0; font-size: clamp(2.4rem, 7vw, 3.5rem); font-weight: 600; letter-spacing: -.04em; line-height: 1.15; }
+        .note {
+            margin: 8px 0 24px;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 260px;
+            gap: 20px;
+            align-items: start;
+        }
+        .panel {
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            background: var(--paper);
+        }
+        .chat { display: flex; min-height: min(70vh, 760px); flex-direction: column; }
+        .chat-tools {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid var(--rule);
+        }
+        label { display: block; margin-bottom: 5px; color: var(--muted); font-size: .9rem; }
+        select, textarea {
+            width: 100%;
+            border: 1px solid #35443a;
+            border-radius: 6px;
+            background: #080d09;
+            color: var(--ink);
+        }
+        select { max-width: 280px; padding: 9px; }
+        .chat-tools button, .send-button, .memory-tools button {
+            padding: 9px 13px;
+            border: 1px solid #35443a;
+            border-radius: 6px;
+            background: #101a12;
+            color: var(--ink);
+            cursor: pointer;
+        }
+        button:hover:not(:disabled) { border-color: var(--pen); color: var(--pen); }
+        button:disabled { cursor: wait; opacity: .6; }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .messages {
+            display: flex;
+            flex: 1;
+            min-height: 280px;
+            flex-direction: column;
+            gap: 14px;
+            padding: 18px;
+            overflow-y: auto;
+        }
+        .message {
+            max-width: 88%;
+            padding: 11px 14px;
+            border-radius: 7px;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: #123d1c;
+        }
+        .message.model {
+            align-self: flex-start;
+            background: #19211b;
+        }
+        .empty { margin: auto; color: var(--muted); text-align: center; }
+        .composer {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            padding: 16px;
+            border-top: 1px solid var(--rule);
+        }
+        .composer textarea { min-height: 48px; max-height: 180px; padding: 10px; resize: vertical; }
+        .send-button { align-self: end; background: #39ff65 !important; color: #061008 !important; font-weight: 700; }
+        .send-button:hover:not(:disabled) { background: #72ff8e !important; color: #061008 !important; }
+        #status { min-height: 1.5em; margin: 0; padding: 0 16px 12px; color: var(--muted); font-size: .9rem; }
+        #status.error { color: var(--error); }
+        .memory { padding: 16px; }
+        .memory h2 { margin: 0 0 4px; font-size: 1.35rem; }
+        .memory p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+        .memory textarea { min-height: 190px; padding: 10px; resize: vertical; }
+        .memory-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .privacy { margin-top: 14px !important; font-size: .8rem !important; }
+        @media (max-width: 700px) {
+            body { padding: 18px 12px; }
+            .layout { grid-template-columns: 1fr; }
+            .chat { min-height: 62vh; }
+            .memory textarea { min-height: 110px; }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <a class="back" href="index.html">&larr; Home</a>
+    <h1>AI Chat</h1>
+    <p class="note">A conversation that remembers what matters.</p>
+
+    <div class="layout">
+        <section class="panel chat" aria-label="Chat">
+            <div class="chat-tools">
+                <div>
+                    <label for="model">Model</label>
+                    <select id="model">
+                        <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</option>
+                        <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite</option>
+                        <option value="antigravity">Antigravity (experimental)</option>
+                    </select>
+                </div>
+                <button id="clear-chat" type="button">Clear chat</button>
+            </div>
+            <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+            <p id="status" role="status" aria-live="polite"></p>
+            <form id="composer" class="composer">
+                <label for="message" class="visually-hidden">Your message</label>
+                <textarea id="message" maxlength="5000" rows="2" placeholder="Ask a question or start a conversation..." required></textarea>
+                <button id="send" class="send-button" type="submit">Send</button>
+            </form>
+        </section>
+
+        <aside class="panel memory" aria-labelledby="memory-title">
+            <h2 id="memory-title">What I remember</h2>
+            <p>Useful facts and preferences the AI can use in future replies. Edit or remove anything here.</p>
+            <label for="memory-items">One item per line</label>
+            <textarea id="memory-items" maxlength="15000" aria-describedby="memory-note"></textarea>
+            <div class="memory-tools">
+                <button id="clear-memory" type="button">Clear memory</button>
+            </div>
+            <p id="memory-note" class="privacy">Chat history and memory stay in this browser, but are sent to the selected AI service with your messages. Clearing this site's browser data will erase them.</p>
+        </aside>
+    </div>
+</main>
+<script>
+(() => {
+    const STORAGE_KEY = "mystuff.ai-chat.v1";
+    const MAX_HISTORY = 30;
+    const MAX_MEMORY = 30;
+    const messagesElement = document.getElementById("messages");
+    const statusElement = document.getElementById("status");
+    const memoryElement = document.getElementById("memory-items");
+    const modelElement = document.getElementById("model");
+    const messageElement = document.getElementById("message");
+    const sendButton = document.getElementById("send");
+    let state = { model: modelElement.value, messages: [], memory: [] };
+    let storageAvailable = true;
+
+    function setStatus(message, isError = false) {
+        statusElement.textContent = message;
+        statusElement.classList.toggle("error", isError);
+    }
+
+    function saveState() {
+        try {
+            state.model = modelElement.value;
+            state.memory = memoryElement.value
+                .split("\n")
+                .map((item) => item.trim())
+                .filter(Boolean)
+                .slice(0, MAX_MEMORY);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            storageAvailable = true;
+            return true;
+        } catch (error) {
+            storageAvailable = false;
+            setStatus(`Could not save chat data in this browser: ${error.message}`, true);
+            return false;
+        }
+    }
+
+    function renderMessages() {
+        messagesElement.replaceChildren();
+        if (!state.messages.length) {
+            const empty = document.createElement("p");
+            empty.className = "empty";
+            empty.textContent = "Your conversation will appear here.";
+            messagesElement.append(empty);
+            return;
+        }
+        for (const message of state.messages) {
+            const bubble = document.createElement("div");
+            bubble.className = `message ${message.role}`;
+            bubble.textContent = message.text;
+            messagesElement.append(bubble);
+        }
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+
+    function loadState() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (!stored) return;
+            const parsed = JSON.parse(stored);
+            if (
+                !parsed ||
+                !Array.isArray(parsed.messages) ||
+                !Array.isArray(parsed.memory) ||
+                !parsed.messages.every(
+                    (item) =>
+                        item &&
+                        (item.role === "user" || item.role === "model") &&
+                        typeof item.text === "string"
+                ) ||
+                !parsed.memory.every((item) => typeof item === "string")
+            ) {
+                throw new Error("Saved chat data has an unexpected format.");
+            }
+            state = {
+                model: typeof parsed.model === "string" ? parsed.model : modelElement.value,
+                messages: parsed.messages,
+                memory: parsed.memory
+            };
+            if ([...modelElement.options].some((option) => option.value === state.model)) {
+                modelElement.value = state.model;
+            }
+            memoryElement.value = state.memory.join("\n");
+        } catch (error) {
+            storageAvailable = false;
+            setStatus(`Could not load saved chat data: ${error.message}`, true);
+        }
+    }
+
+    function toApiHistory(messages) {
+        return messages.slice(-MAX_HISTORY).map(({ role, text }) => ({ role, text }));
+    }
+
+    document.getElementById("composer").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const text = messageElement.value.trim();
+        if (!text || sendButton.disabled) return;
+        if (!storageAvailable) {
+            setStatus("Chat storage is unavailable. Resolve the storage error before sending.", true);
+            return;
+        }
+
+        const previousMessages = state.messages.slice();
+        state.messages.push({ role: "user", text });
+        renderMessages();
+        if (!saveState()) {
+            state.messages = previousMessages;
+            renderMessages();
+            messageElement.value = text;
+            return;
+        }
+        messageElement.value = "";
+        sendButton.disabled = true;
+        setStatus("Thinking...");
+
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: modelElement.value,
+                    message: text,
+                    history: toApiHistory(previousMessages),
+                    memory: state.memory
+                })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(result.error || `Request failed with status ${response.status}.`);
+            }
+            if (
+                typeof result.reply !== "string" ||
+                !Array.isArray(result.memory) ||
+                !result.memory.every((item) => typeof item === "string")
+            ) {
+                throw new Error("The chat endpoint returned an unexpected response.");
+            }
+            state.messages.push({ role: "model", text: result.reply });
+            state.memory = result.memory.slice(0, MAX_MEMORY);
+            memoryElement.value = state.memory.join("\n");
+            renderMessages();
+            if (saveState()) setStatus("");
+        } catch (error) {
+            state.messages = previousMessages;
+            renderMessages();
+            const saved = saveState();
+            messageElement.value = text;
+            setStatus(
+                saved
+                    ? error.message
+                    : `${error.message} Could not update saved chat data.`,
+                true
+            );
+        } finally {
+            sendButton.disabled = false;
+            messageElement.focus();
+        }
+    });
+
+    modelElement.addEventListener("change", saveState);
+    memoryElement.addEventListener("input", saveState);
+    document.getElementById("clear-chat").addEventListener("click", () => {
+        state.messages = [];
+        const saved = saveState();
+        renderMessages();
+        setStatus(
+            saved
+                ? "Chat history cleared. Saved memory was kept."
+                : "Chat history cleared, but the change could not be saved.",
+            !saved
+        );
+    });
+    document.getElementById("clear-memory").addEventListener("click", () => {
+        state.memory = [];
+        memoryElement.value = "";
+        const saved = saveState();
+        setStatus(
+            saved ? "Saved memory cleared." : "Memory cleared, but the change could not be saved.",
+            !saved
+        );
+    });
+
+    loadState();
+    renderMessages();
+})();
+</script>
+</body>
+</html>
